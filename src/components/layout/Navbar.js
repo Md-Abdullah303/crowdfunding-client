@@ -2,19 +2,28 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
   X,
-  Zap,
   LayoutDashboard,
   LogOut,
   ChevronDown,
   Coins,
-  Github,
+  Compass,
+  Info,
+  Grid3x3,
+  UserPlus,
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
+
+const navLinks = [
+  { href: "/campaigns", label: "Explore", icon: <Compass size={15} /> },
+  { href: "/#how-it-works", label: "How It Works", icon: <Info size={15} /> },
+  { href: "/#categories", label: "Categories", icon: <Grid3x3 size={15} /> },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -26,12 +35,11 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
     setDropdownOpen(false);
@@ -42,17 +50,8 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  const navLinks = [
-    { href: "/campaigns", label: "Explore" },
-    {
-      href: "https://github.com/Md-Abdullah303/crowdfunding-client",
-      label: "GitHub",
-      external: true,
-      icon: <Github size={14} />,
-    },
-  ];
-
-  const isActive = (href) => pathname === href;
+  const isActive = (href) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href.split("#")[0]) && href.split("#")[0] !== "/";
 
   return (
     <>
@@ -60,93 +59,129 @@ export default function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[rgba(9,9,15,0.85)] backdrop-blur-xl border-b border-[rgba(255,255,255,0.06)] shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
-            : "bg-transparent"
-        }`}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          transition: "background 0.3s ease, box-shadow 0.3s ease",
+          background: scrolled
+            ? "rgba(9,9,15,0.92)"
+            : "rgba(9,9,15,0.3)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          boxShadow: scrolled
+            ? "0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.4)"
+            : "none",
+        }}
       >
         <div className="container">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link
-              href="/"
-              className="flex items-center gap-2 group"
-              aria-label="FundFlow Home"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6c47ff] to-[#a855f7] flex items-center justify-center shadow-[0_0_20px_rgba(108,71,255,0.4)] group-hover:shadow-[0_0_30px_rgba(108,71,255,0.6)] transition-shadow duration-300">
-                <Zap size={16} className="text-white" />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "68px" }}>
+
+            {/* ── Logo ────────────────────────────────────────────────────────── */}
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+              <div style={{
+                width: "36px", height: "36px", borderRadius: "10px", overflow: "hidden",
+                boxShadow: "0 0 20px rgba(108,71,255,0.45)",
+                flexShrink: 0,
+              }}>
+                <Image src="/logo.png" alt="FundFlow logo" width={36} height={36} style={{ objectFit: "cover" }} />
               </div>
-              <span
-                className="text-lg font-bold gradient-text"
-                style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
-              >
+              <span style={{
+                fontSize: "1.15rem", fontWeight: 800,
+                fontFamily: "Plus Jakarta Sans, Inter, sans-serif",
+                background: "linear-gradient(135deg, #6c47ff, #a855f7)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
                 FundFlow
               </span>
             </Link>
 
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive(link.href)
-                      ? "text-[#6c47ff] bg-[rgba(108,71,255,0.1)]"
-                      : "text-[#8b8ba8] hover:text-[#f1f1f5] hover:bg-[rgba(255,255,255,0.05)]"
-                  }`}
-                >
-                  {link.icon}
-                  {link.label}
-                </a>
-              ))}
+            {/* ── Desktop Nav ──────────────────────────────────────────────────── */}
+            <nav style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden md:flex">
+              {navLinks.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "6px",
+                      padding: "7px 14px", borderRadius: "10px",
+                      fontSize: "0.875rem", fontWeight: 500,
+                      textDecoration: "none",
+                      color: active ? "#a78bfa" : "#8b8ba8",
+                      background: active ? "rgba(108,71,255,0.1)" : "transparent",
+                      transition: "all 0.18s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.color = "#f1f1f5";
+                        e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.color = "#8b8ba8";
+                        e.currentTarget.style.background = "transparent";
+                      }
+                    }}
+                  >
+                    {link.icon}
+                    {link.label}
+                  </Link>
+                );
+              })}
             </nav>
 
-            {/* Auth Section */}
-            <div className="hidden md:flex items-center gap-3">
+            {/* ── Auth Area ────────────────────────────────────────────────────── */}
+            <div className="hidden md:flex" style={{ alignItems: "center", gap: "10px" }}>
               {isPending ? (
-                <div className="skeleton w-24 h-9 rounded-lg" />
+                <div className="skeleton" style={{ width: "120px", height: "38px", borderRadius: "10px" }} />
               ) : user ? (
-                // Logged-in user dropdown
-                <div className="relative">
+                <div style={{ position: "relative" }}>
                   <button
                     onClick={() => setDropdownOpen((v) => !v)}
-                    className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(19,19,31,0.7)] hover:border-[rgba(108,71,255,0.4)] transition-all duration-200"
                     id="user-menu-btn"
-                    aria-expanded={dropdownOpen}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "10px",
+                      padding: "6px 12px 6px 6px", borderRadius: "12px",
+                      border: "1px solid rgba(255,255,255,0.09)",
+                      background: "rgba(19,19,31,0.8)",
+                      cursor: "pointer",
+                      transition: "border-color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.45)"}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)"}
                   >
                     {user.image ? (
-                      <img
-                        src={user.image}
-                        alt={user.name}
-                        className="w-7 h-7 rounded-full object-cover"
-                      />
+                      <img src={user.image} alt={user.name} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }} />
                     ) : (
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6c47ff] to-[#a855f7] flex items-center justify-center text-white text-xs font-bold">
+                      <div style={{
+                        width: "28px", height: "28px", borderRadius: "50%",
+                        background: "linear-gradient(135deg,#6c47ff,#a855f7)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0,
+                      }}>
                         {user.name?.[0]?.toUpperCase()}
                       </div>
                     )}
-                    <div className="text-left">
-                      <p className="text-xs font-semibold text-[#f1f1f5] leading-none">
-                        {user.name?.split(" ")[0]}
-                      </p>
-                      <p className="text-[10px] text-[#8b8ba8] capitalize">
-                        {user.role}
-                      </p>
+                    <div style={{ textAlign: "left" }}>
+                      <p style={{ fontSize: "12px", fontWeight: 600, color: "#f1f1f5", lineHeight: 1 }}>{user.name?.split(" ")[0]}</p>
+                      <p style={{ fontSize: "10px", color: "#8b8ba8", textTransform: "capitalize" }}>{user.role}</p>
                     </div>
-                    <div className="flex items-center gap-1 ml-1 px-2 py-0.5 rounded-full bg-[rgba(108,71,255,0.15)] border border-[rgba(108,71,255,0.25)]">
-                      <Coins size={10} className="text-[#8b6bff]" />
-                      <span className="text-[10px] font-bold text-[#8b6bff]">
-                        {user.credits ?? 0}
-                      </span>
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: "3px",
+                      padding: "2px 8px", borderRadius: "999px",
+                      background: "rgba(108,71,255,0.15)", border: "1px solid rgba(108,71,255,0.25)",
+                    }}>
+                      <Coins size={10} style={{ color: "#8b6bff" }} />
+                      <span style={{ fontSize: "10px", fontWeight: 700, color: "#8b6bff" }}>{user.credits ?? 0}</span>
                     </div>
-                    <ChevronDown
-                      size={14}
-                      className={`text-[#8b8ba8] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
-                    />
+                    <ChevronDown size={13} style={{ color: "#8b8ba8", transform: dropdownOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
                   </button>
 
                   <AnimatePresence>
@@ -155,103 +190,109 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: 8, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-52 glass-card p-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.5)]"
+                        transition={{ duration: 0.14 }}
+                        style={{
+                          position: "absolute", right: 0, top: "calc(100% + 8px)",
+                          width: "200px", background: "rgba(15,15,26,0.95)",
+                          border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px",
+                          padding: "6px", backdropFilter: "blur(20px)",
+                          boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
+                        }}
                       >
-                        <Link
-                          href="/dashboard"
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-[#f1f1f5] hover:bg-[rgba(108,71,255,0.1)] transition-colors duration-150"
+                        <Link href="/dashboard" style={{
+                          display: "flex", alignItems: "center", gap: "10px",
+                          padding: "10px 12px", borderRadius: "10px",
+                          fontSize: "13px", color: "#f1f1f5", textDecoration: "none",
+                          transition: "background 0.15s",
+                        }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = "rgba(108,71,255,0.1)"}
+                          onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                         >
-                          <LayoutDashboard size={15} />
-                          Dashboard
+                          <LayoutDashboard size={15} /> Dashboard
                         </Link>
-                        <hr className="my-1 border-[rgba(255,255,255,0.06)]" />
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-[#ef4444] hover:bg-[rgba(239,68,68,0.08)] transition-colors duration-150"
-                          id="sign-out-btn"
+                        <hr style={{ margin: "4px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
+                        <button onClick={handleSignOut} id="sign-out-btn" style={{
+                          width: "100%", display: "flex", alignItems: "center", gap: "10px",
+                          padding: "10px 12px", borderRadius: "10px",
+                          fontSize: "13px", color: "#ef4444", background: "none",
+                          border: "none", cursor: "pointer", transition: "background 0.15s",
+                        }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239,68,68,0.08)"}
+                          onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                         >
-                          <LogOut size={15} />
-                          Sign Out
+                          <LogOut size={15} /> Sign Out
                         </button>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
               ) : (
-                // Guest buttons
                 <>
-                  <Link href="/login" className="btn-secondary text-sm py-2 px-4">
+                  <Link href="/login" className="btn-secondary" style={{ fontSize: "0.875rem", padding: "8px 18px" }}>
                     Log In
                   </Link>
-                  <Link href="/register" className="btn-primary text-sm py-2 px-4">
-                    Get Started
+                  <Link href="/register" className="btn-primary" style={{ fontSize: "0.875rem", padding: "8px 18px" }}>
+                    <UserPlus size={14} /> Get Started
                   </Link>
                 </>
               )}
             </div>
 
-            {/* Mobile hamburger */}
+            {/* ── Mobile Hamburger ──────────────────────────────────────────────── */}
             <button
-              className="md:hidden p-2 rounded-lg text-[#8b8ba8] hover:text-[#f1f1f5] hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+              className="md:hidden"
               onClick={() => setMobileOpen((v) => !v)}
-              aria-label="Toggle mobile menu"
+              aria-label="Toggle menu"
               id="mobile-menu-toggle"
+              style={{
+                padding: "8px", borderRadius: "10px", border: "none",
+                background: "none", cursor: "pointer", color: "#8b8ba8",
+              }}
             >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* ── Mobile Menu ──────────────────────────────────────────────────────── */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden overflow-hidden border-t border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,15,0.95)] backdrop-blur-xl"
+              transition={{ duration: 0.22 }}
+              style={{
+                overflow: "hidden",
+                borderTop: "1px solid rgba(255,255,255,0.06)",
+                background: "rgba(9,9,15,0.97)",
+              }}
             >
-              <div className="container py-4 flex flex-col gap-2">
+              <div className="container" style={{ paddingTop: "12px", paddingBottom: "16px", display: "flex", flexDirection: "column", gap: "4px" }}>
                 {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-[#8b8ba8] hover:text-[#f1f1f5] hover:bg-[rgba(255,255,255,0.05)] transition-all"
-                  >
-                    {link.icon}
-                    {link.label}
-                  </a>
+                  <Link key={link.href} href={link.href} style={{
+                    display: "flex", alignItems: "center", gap: "10px",
+                    padding: "12px 16px", borderRadius: "12px",
+                    fontSize: "14px", fontWeight: 500,
+                    color: "#8b8ba8", textDecoration: "none",
+                  }}>
+                    {link.icon} {link.label}
+                  </Link>
                 ))}
-                <hr className="border-[rgba(255,255,255,0.06)]" />
+                <hr style={{ margin: "8px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
                 {user ? (
                   <>
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-[#f1f1f5] hover:bg-[rgba(108,71,255,0.1)] transition-all"
-                    >
-                      <LayoutDashboard size={15} />
-                      Dashboard
+                    <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "12px", fontSize: "14px", color: "#f1f1f5", textDecoration: "none" }}>
+                      <LayoutDashboard size={15} /> Dashboard
                     </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-[#ef4444] hover:bg-[rgba(239,68,68,0.08)] transition-all w-full"
-                    >
-                      <LogOut size={15} />
-                      Sign Out
+                    <button onClick={handleSignOut} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "12px", fontSize: "14px", color: "#ef4444", background: "none", border: "none", cursor: "pointer", width: "100%" }}>
+                      <LogOut size={15} /> Sign Out
                     </button>
                   </>
                 ) : (
-                  <div className="flex flex-col gap-2 mt-1">
-                    <Link href="/login" className="btn-secondary text-sm justify-center">
-                      Log In
-                    </Link>
-                    <Link href="/register" className="btn-primary text-sm justify-center">
-                      Get Started
-                    </Link>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
+                    <Link href="/login" className="btn-secondary" style={{ justifyContent: "center" }}>Log In</Link>
+                    <Link href="/register" className="btn-primary" style={{ justifyContent: "center" }}><UserPlus size={14} /> Get Started</Link>
                   </div>
                 )}
               </div>
@@ -260,8 +301,8 @@ export default function Navbar() {
         </AnimatePresence>
       </motion.header>
 
-      {/* Spacer so content doesn't hide behind fixed navbar */}
-      <div className="h-16" />
+      {/* Spacer */}
+      <div style={{ height: "68px" }} />
     </>
   );
 }

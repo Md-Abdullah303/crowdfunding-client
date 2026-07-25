@@ -19,6 +19,10 @@ export const metadata = {
     "FundFlow is a modern crowdfunding platform where creators launch campaigns and supporters fund the ideas they believe in.",
   keywords: ["crowdfunding", "campaigns", "funding", "creators", "supporters"],
   authors: [{ name: "FundFlow" }],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     title: "FundFlow — Crowdfunding Platform",
     description: "Launch campaigns and fund ideas you believe in.",

@@ -8,39 +8,36 @@ import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 const slides = [
   {
     id: 1,
+    bg: "/hero-1.png",
     badge: "🚀 Launch Your Idea",
     heading: "Turn Your Vision Into",
     highlight: "Reality",
+    highlightGradient: "linear-gradient(135deg, #6c47ff, #a855f7, #ec4899)",
     sub: "Create campaigns, raise funds with platform credits, and build the future you've always imagined.",
     cta: { label: "Start a Campaign", href: "/register" },
     ctaSecondary: { label: "Explore Campaigns", href: "/campaigns" },
-    gradient: "from-[#6c47ff] via-[#a855f7] to-[#ec4899]",
-    orb1: "bg-[#6c47ff]",
-    orb2: "bg-[#a855f7]",
   },
   {
     id: 2,
+    bg: "/hero-2.png",
     badge: "💰 Support Creators",
     heading: "Fund Ideas That",
     highlight: "Matter",
+    highlightGradient: "linear-gradient(135deg, #ff6b35, #f59e0b, #eab308)",
     sub: "Purchase platform credits, support campaigns you believe in, and watch great ideas come to life.",
     cta: { label: "Explore Campaigns", href: "/campaigns" },
-    ctaSecondary: { label: "Buy Credits", href: "/dashboard/purchase-credit" },
-    gradient: "from-[#ff6b35] via-[#f59e0b] to-[#eab308]",
-    orb1: "bg-[#ff6b35]",
-    orb2: "bg-[#f59e0b]",
+    ctaSecondary: { label: "How It Works", href: "/#how-it-works" },
   },
   {
     id: 3,
-    badge: "🏆 Top Platform",
+    bg: "/hero-3.png",
+    badge: "🏆 Trusted Platform",
     heading: "Where Innovation",
     highlight: "Gets Funded",
+    highlightGradient: "linear-gradient(135deg, #06b6d4, #3b82f6, #6c47ff)",
     sub: "Join thousands of creators and supporters in a transparent, credit-based crowdfunding ecosystem.",
     cta: { label: "Join for Free", href: "/register" },
-    ctaSecondary: { label: "How It Works", href: "/#how-it-works" },
-    gradient: "from-[#06b6d4] via-[#3b82f6] to-[#6c47ff]",
-    orb1: "bg-[#06b6d4]",
-    orb2: "bg-[#3b82f6]",
+    ctaSecondary: { label: "Browse Categories", href: "/#categories" },
   },
 ];
 
@@ -52,77 +49,81 @@ export default function HeroSection() {
     setDirection(1);
     setCurrent((c) => (c + 1) % slides.length);
   };
-
   const prev = () => {
     setDirection(-1);
     setCurrent((c) => (c - 1 + slides.length) % slides.length);
   };
 
   useEffect(() => {
-    const timer = setInterval(next, 5000);
-    return () => clearInterval(timer);
+    const t = setInterval(next, 6000);
+    return () => clearInterval(t);
   }, []);
 
   const slide = slides[current];
 
-  const variants = {
-    enter: (dir) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
+  const textVariants = {
+    enter: (dir) => ({ x: dir > 0 ? 50 : -50, opacity: 0 }),
+    center: { x: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    exit: (dir) => ({ x: dir > 0 ? -50 : 50, opacity: 0, transition: { duration: 0.3 } }),
   };
 
   return (
     <section
-      className="relative min-h-[calc(100vh-4rem)] flex items-center overflow-hidden"
+      style={{
+        position: "relative",
+        minHeight: "calc(100vh - 68px)",
+        display: "flex",
+        alignItems: "center",
+        overflow: "hidden",
+      }}
       aria-label="Hero"
     >
-      {/* Animated background orbs */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Background Image Layer — crossfade between slides */}
+      <AnimatePresence mode="sync">
         <motion.div
-          key={`orb1-${current}`}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.18, scale: 1 }}
-          transition={{ duration: 1 }}
-          className={`absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full blur-[100px] ${slide.orb1}`}
-        />
-        <motion.div
-          key={`orb2-${current}`}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.12, scale: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className={`absolute -bottom-32 -right-32 w-[600px] h-[600px] rounded-full blur-[120px] ${slide.orb2}`}
-        />
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
+          key={`bg-${current}`}
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9, ease: "easeInOut" }}
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${slide.bg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            zIndex: 0,
           }}
         />
-      </div>
+      </AnimatePresence>
 
-      <div className="container relative z-10 py-16">
+      {/* Dark overlay for text readability */}
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 1,
+        background: "linear-gradient(to right, rgba(9,9,15,0.88) 45%, rgba(9,9,15,0.55) 70%, rgba(9,9,15,0.3) 100%)",
+      }} />
+      {/* Bottom fade */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, height: "120px", zIndex: 1,
+        background: "linear-gradient(to bottom, transparent, rgba(9,9,15,0.95))",
+      }} />
+
+      {/* Content */}
+      <div className="container" style={{ position: "relative", zIndex: 2, paddingTop: "3rem", paddingBottom: "5rem" }}>
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
-            key={current}
+            key={`content-${current}`}
             custom={direction}
-            variants={variants}
+            variants={textVariants}
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.45, ease: "easeInOut" }}
-            className="max-w-3xl"
+            style={{ maxWidth: "700px" }}
           >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mb-6 inline-flex"
-            >
-              <span className="badge badge-primary text-sm gap-2">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+              style={{ marginBottom: "20px" }}>
+              <span className="badge badge-primary" style={{ fontSize: "13px", padding: "5px 14px" }}>
                 <Sparkles size={12} />
                 {slide.badge}
               </span>
@@ -130,84 +131,120 @@ export default function HeroSection() {
 
             {/* Heading */}
             <motion.h1
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.08] tracking-tight mb-4"
-              style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
+              style={{
+                fontFamily: "Plus Jakarta Sans, Inter, sans-serif",
+                fontSize: "clamp(2.8rem, 6vw, 5.5rem)",
+                fontWeight: 900,
+                lineHeight: 1.06,
+                letterSpacing: "-0.02em",
+                color: "#f1f1f5",
+                marginBottom: "16px",
+              }}
             >
               {slide.heading}{" "}
-              <span
-                className={`bg-gradient-to-r ${slide.gradient} bg-clip-text text-transparent`}
-              >
+              <span style={{
+                background: slide.highlightGradient,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
                 {slide.highlight}
               </span>
             </motion.h1>
 
             {/* Subtitle */}
             <motion.p
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-lg text-[#8b8ba8] max-w-2xl leading-relaxed mb-8"
+              style={{
+                fontSize: "1.1rem",
+                color: "rgba(241,241,245,0.7)",
+                lineHeight: 1.65,
+                maxWidth: "560px",
+                marginBottom: "36px",
+              }}
             >
               {slide.sub}
             </motion.p>
 
             {/* CTAs */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="flex flex-wrap items-center gap-4"
+              style={{ display: "flex", flexWrap: "wrap", gap: "14px", alignItems: "center" }}
             >
-              <Link href={slide.cta.href} className="btn-primary text-base px-6 py-3">
+              <Link href={slide.cta.href} className="btn-primary" style={{ fontSize: "1rem", padding: "12px 28px" }}>
                 {slide.cta.label}
-                <ArrowRight size={16} />
+                <ArrowRight size={17} />
               </Link>
-              <Link href={slide.ctaSecondary.href} className="btn-secondary text-base px-6 py-3">
+              <Link href={slide.ctaSecondary.href} className="btn-secondary" style={{ fontSize: "1rem", padding: "12px 28px" }}>
                 {slide.ctaSecondary.label}
               </Link>
             </motion.div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Slider controls */}
-        <div className="flex items-center gap-4 mt-14">
-          {/* Dots */}
-          <div className="flex gap-2">
+        {/* Slider Controls */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: "16px",
+          marginTop: "60px",
+        }}>
+          {/* Dot indicators */}
+          <div style={{ display: "flex", gap: "8px" }}>
             {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`transition-all duration-300 rounded-full ${
-                  i === current
-                    ? "w-8 h-2 bg-[#6c47ff]"
-                    : "w-2 h-2 bg-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.4)]"
-                }`}
+                style={{
+                  height: "6px",
+                  width: i === current ? "28px" : "8px",
+                  borderRadius: "999px",
+                  background: i === current ? "#6c47ff" : "rgba(255,255,255,0.25)",
+                  border: "none", cursor: "pointer",
+                  transition: "all 0.3s ease",
+                }}
               />
             ))}
           </div>
 
-          {/* Arrows */}
-          <div className="flex gap-2 ml-auto">
-            <button
-              onClick={prev}
-              aria-label="Previous slide"
-              id="hero-prev-btn"
-              className="w-9 h-9 rounded-xl border border-[rgba(255,255,255,0.1)] flex items-center justify-center text-[#8b8ba8] hover:text-[#f1f1f5] hover:border-[rgba(108,71,255,0.4)] hover:bg-[rgba(108,71,255,0.08)] transition-all"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              onClick={next}
-              aria-label="Next slide"
-              id="hero-next-btn"
-              className="w-9 h-9 rounded-xl border border-[rgba(255,255,255,0.1)] flex items-center justify-center text-[#8b8ba8] hover:text-[#f1f1f5] hover:border-[rgba(108,71,255,0.4)] hover:bg-[rgba(108,71,255,0.08)] transition-all"
-            >
-              <ChevronRight size={18} />
-            </button>
+          {/* Prev / Next */}
+          <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
+            {[{ fn: prev, label: "Previous slide", icon: <ChevronLeft size={18} />, id: "hero-prev-btn" },
+              { fn: next, label: "Next slide", icon: <ChevronRight size={18} />, id: "hero-next-btn" }].map((btn) => (
+              <button
+                key={btn.id}
+                id={btn.id}
+                onClick={btn.fn}
+                aria-label={btn.label}
+                style={{
+                  width: "38px", height: "38px", borderRadius: "12px",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  background: "rgba(9,9,15,0.5)",
+                  color: "#8b8ba8", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.2s ease",
+                  backdropFilter: "blur(8px)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#f1f1f5";
+                  e.currentTarget.style.borderColor = "rgba(108,71,255,0.5)";
+                  e.currentTarget.style.background = "rgba(108,71,255,0.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#8b8ba8";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+                  e.currentTarget.style.background = "rgba(9,9,15,0.5)";
+                }}
+              >
+                {btn.icon}
+              </button>
+            ))}
           </div>
         </div>
       </div>

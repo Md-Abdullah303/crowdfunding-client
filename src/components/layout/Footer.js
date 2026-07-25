@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Zap, Github, Twitter, Linkedin, Heart } from "lucide-react";
+import { Zap, Heart, ExternalLink, MessageCircle, Link2 } from "lucide-react";
 
 const footerLinks = {
   Platform: [
@@ -28,9 +28,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: <Github size={18} />, href: "https://github.com/Md-Abdullah303", label: "GitHub" },
-  { icon: <Twitter size={18} />, href: "#", label: "Twitter" },
-  { icon: <Linkedin size={18} />, href: "#", label: "LinkedIn" },
+  { icon: <ExternalLink size={18} />, href: "https://github.com/Md-Abdullah303", label: "GitHub" },
+  { icon: <MessageCircle size={18} />, href: "#", label: "Twitter" },
+  { icon: <Link2 size={18} />, href: "#", label: "LinkedIn" },
 ];
 
 export default function Footer() {
