@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Zap, Heart, ExternalLink, MessageCircle, Link2 } from "lucide-react";
+import Image from "next/image";
+import { Heart, ExternalLink, ArrowUpRight, MessageCircle, Link2 } from "lucide-react";
 
 const footerLinks = {
   Platform: [
@@ -14,52 +15,61 @@ const footerLinks = {
     { label: "Dashboard", href: "/dashboard" },
   ],
   Developer: [
-    {
-      label: "Client Repo",
-      href: "https://github.com/Md-Abdullah303/crowdfunding-client",
-      external: true,
-    },
-    {
-      label: "Server Repo",
-      href: "https://github.com/Md-Abdullah303/crowdfunding-server",
-      external: true,
-    },
+    { label: "Client Repo", href: "https://github.com/Md-Abdullah303/crowdfunding-client", external: true },
+    { label: "Server Repo", href: "https://github.com/Md-Abdullah303/crowdfunding-server", external: true },
   ],
 };
 
 const socialLinks = [
-  { icon: <ExternalLink size={18} />, href: "https://github.com/Md-Abdullah303", label: "GitHub" },
-  { icon: <MessageCircle size={18} />, href: "#", label: "Twitter" },
-  { icon: <Link2 size={18} />, href: "#", label: "LinkedIn" },
+  { icon: <ExternalLink size={16} />, href: "https://github.com/Md-Abdullah303", label: "GitHub" },
+  { icon: <MessageCircle size={16} />, href: "#", label: "Twitter" },
+  { icon: <Link2 size={16} />, href: "#", label: "LinkedIn" },
 ];
 
 export default function Footer() {
   return (
     <footer
-      className="border-t border-[rgba(255,255,255,0.06)] bg-[rgba(9,9,15,0.8)]"
       role="contentinfo"
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderTop: "1px solid rgba(255,255,255,0.05)",
+        background: "linear-gradient(180deg, rgba(9,9,15,0) 0%, rgba(8,8,18,1) 100%)",
+        marginTop: "auto",
+      }}
     >
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+      {/* Top glow */}
+      <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "600px", height: "1px", background: "linear-gradient(to right, transparent, rgba(108,71,255,0.5), transparent)" }} />
+      <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "300px", height: "80px", background: "radial-gradient(ellipse, rgba(108,71,255,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+      <div className="container" style={{ paddingTop: "64px", paddingBottom: "32px" }}>
+
+        {/* Main grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr 1fr 1fr", gap: "40px", marginBottom: "56px" }}>
+
           {/* Brand col */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 w-fit mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6c47ff] to-[#a855f7] flex items-center justify-center shadow-[0_0_20px_rgba(108,71,255,0.3)]">
-                <Zap size={16} className="text-white" />
+          <div>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", marginBottom: "16px", width: "fit-content" }}>
+              <div style={{ width: "36px", height: "36px", borderRadius: "10px", overflow: "hidden", boxShadow: "0 0 20px rgba(108,71,255,0.4)", flexShrink: 0 }}>
+                <Image src="/logo.png" alt="FundFlow" width={36} height={36} style={{ objectFit: "cover" }} />
               </div>
-              <span
-                className="text-lg font-bold gradient-text"
-                style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
-              >
+              <span style={{
+                fontSize: "1.15rem", fontWeight: 800,
+                fontFamily: "Plus Jakarta Sans, Inter, sans-serif",
+                background: "linear-gradient(135deg,#6c47ff,#a855f7)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+              }}>
                 FundFlow
               </span>
             </Link>
-            <p className="text-[#8b8ba8] text-sm leading-relaxed max-w-xs">
-              A modern crowdfunding platform where creators launch campaigns
-              and supporters fund the ideas they believe in. 20 credits = $1 USD.
+
+            <p style={{ fontSize: "13.5px", color: "#8b8ba8", lineHeight: 1.75, maxWidth: "280px", marginBottom: "24px" }}>
+              A modern crowdfunding platform where creators launch campaigns and supporters fund the ideas they believe in.{" "}
+              <span style={{ color: "#6c47ff", fontWeight: 600 }}>20 credits = $1 USD.</span>
             </p>
-            {/* Social Links */}
-            <div className="flex items-center gap-3 mt-5">
+
+            {/* Social icons */}
+            <div style={{ display: "flex", gap: "10px" }}>
               {socialLinks.map((s) => (
                 <a
                   key={s.label}
@@ -67,7 +77,26 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-9 h-9 rounded-xl border border-[rgba(255,255,255,0.08)] flex items-center justify-center text-[#5a5a74] hover:text-[#6c47ff] hover:border-[rgba(108,71,255,0.4)] hover:bg-[rgba(108,71,255,0.08)] transition-all duration-200"
+                  style={{
+                    width: "38px", height: "38px", borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    background: "rgba(19,19,31,0.6)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "#5a5a74", textDecoration: "none",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#6c47ff";
+                    e.currentTarget.style.borderColor = "rgba(108,71,255,0.4)";
+                    e.currentTarget.style.background = "rgba(108,71,255,0.1)";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#5a5a74";
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+                    e.currentTarget.style.background = "rgba(19,19,31,0.6)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
                 >
                   {s.icon}
                 </a>
@@ -78,19 +107,26 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h3 className="text-xs font-semibold text-[#5a5a74] uppercase tracking-widest mb-4">
+              <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a74", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "18px" }}>
                 {title}
               </h3>
-              <ul className="flex flex-col gap-2.5">
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
                 {links.map((link) => (
                   <li key={link.label}>
                     <a
                       href={link.href}
                       target={link.external ? "_blank" : undefined}
                       rel={link.external ? "noopener noreferrer" : undefined}
-                      className="text-sm text-[#8b8ba8] hover:text-[#f1f1f5] transition-colors duration-150"
+                      style={{
+                        fontSize: "13.5px", color: "#8b8ba8", textDecoration: "none",
+                        display: "inline-flex", alignItems: "center", gap: "4px",
+                        transition: "color 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = "#f1f1f5"}
+                      onMouseLeave={(e) => e.currentTarget.style.color = "#8b8ba8"}
                     >
                       {link.label}
+                      {link.external && <ArrowUpRight size={11} style={{ opacity: 0.6 }} />}
                     </a>
                   </li>
                 ))}
@@ -99,13 +135,19 @@ export default function Footer() {
           ))}
         </div>
 
+        {/* Divider */}
+        <div style={{ height: "1px", background: "linear-gradient(to right, transparent, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent)", marginBottom: "28px" }} />
+
         {/* Bottom bar */}
-        <div className="mt-10 pt-6 border-t border-[rgba(255,255,255,0.05)] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-[#5a5a74]">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+          <p style={{ fontSize: "12px", color: "#5a5a74" }}>
             © {new Date().getFullYear()} FundFlow. All rights reserved.
           </p>
-          <p className="text-xs text-[#5a5a74] flex items-center gap-1.5">
-            Built with <Heart size={11} className="text-[#6c47ff]" fill="#6c47ff" /> by Md Abdullah
+          <p style={{ fontSize: "12px", color: "#5a5a74", display: "flex", alignItems: "center", gap: "5px" }}>
+            Built with <Heart size={11} fill="#6c47ff" style={{ color: "#6c47ff" }} /> by{" "}
+            <a href="https://github.com/Md-Abdullah303" target="_blank" rel="noopener noreferrer" style={{ color: "#6c47ff", textDecoration: "none" }}>
+              Md Abdullah
+            </a>
           </p>
         </div>
       </div>

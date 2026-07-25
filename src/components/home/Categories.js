@@ -1,74 +1,139 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import { Cpu, Leaf, Heart, BookOpen, Users, Briefcase, Palette, MoreHorizontal } from "lucide-react";
 
 const categories = [
-  { name: "Technology", icon: <Cpu size={22} />, count: "142", color: "#3b82f6", href: "/campaigns?category=technology" },
-  { name: "Environment", icon: <Leaf size={22} />, count: "89", color: "#22c55e", href: "/campaigns?category=environment" },
-  { name: "Health", icon: <Heart size={22} />, count: "76", color: "#ef4444", href: "/campaigns?category=health" },
-  { name: "Education", icon: <BookOpen size={22} />, count: "115", color: "#14b8a6", href: "/campaigns?category=education" },
-  { name: "Community", icon: <Users size={22} />, count: "98", color: "#f59e0b", href: "/campaigns?category=community" },
-  { name: "Business", icon: <Briefcase size={22} />, count: "63", color: "#ff6b35", href: "/campaigns?category=business" },
-  { name: "Arts", icon: <Palette size={22} />, count: "54", color: "#a855f7", href: "/campaigns?category=arts" },
-  { name: "Other", icon: <MoreHorizontal size={22} />, count: "37", color: "#8b8ba8", href: "/campaigns?category=other" },
+  { name: "Technology", icon: <Cpu size={28} />, count: "142", color: "#3b82f6", bg: "linear-gradient(135deg, #3b82f622, #3b82f608)", border: "rgba(59,130,246,0.2)", href: "/campaigns?category=technology", emoji: "💻" },
+  { name: "Environment", icon: <Leaf size={28} />, count: "89", color: "#22c55e", bg: "linear-gradient(135deg, #22c55e22, #22c55e08)", border: "rgba(34,197,94,0.2)", href: "/campaigns?category=environment", emoji: "🌿" },
+  { name: "Health", icon: <Heart size={28} />, count: "76", color: "#ef4444", bg: "linear-gradient(135deg, #ef444422, #ef444408)", border: "rgba(239,68,68,0.2)", href: "/campaigns?category=health", emoji: "❤️" },
+  { name: "Education", icon: <BookOpen size={28} />, count: "115", color: "#14b8a6", bg: "linear-gradient(135deg, #14b8a622, #14b8a608)", border: "rgba(20,184,166,0.2)", href: "/campaigns?category=education", emoji: "📚" },
+  { name: "Community", icon: <Users size={28} />, count: "98", color: "#f59e0b", bg: "linear-gradient(135deg, #f59e0b22, #f59e0b08)", border: "rgba(245,158,11,0.2)", href: "/campaigns?category=community", emoji: "🤝" },
+  { name: "Business", icon: <Briefcase size={28} />, count: "63", color: "#ff6b35", bg: "linear-gradient(135deg, #ff6b3522, #ff6b3508)", border: "rgba(255,107,53,0.2)", href: "/campaigns?category=business", emoji: "💼" },
+  { name: "Arts", icon: <Palette size={28} />, count: "54", color: "#a855f7", bg: "linear-gradient(135deg, #a855f722, #a855f708)", border: "rgba(168,85,247,0.2)", href: "/campaigns?category=arts", emoji: "🎨" },
+  { name: "Other", icon: <MoreHorizontal size={28} />, count: "37", color: "#8b8ba8", bg: "linear-gradient(135deg, #8b8ba822, #8b8ba808)", border: "rgba(139,139,168,0.2)", href: "/campaigns?category=other", emoji: "✨" },
 ];
 
 export default function Categories() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
+
   return (
-    <section className="section bg-[rgba(15,15,26,0.6)]" id="categories">
+    <section
+      ref={ref}
+      id="categories"
+      style={{
+        padding: "100px 0",
+        position: "relative",
+        background: "linear-gradient(180deg, rgba(9,9,15,0) 0%, rgba(15,10,30,0.5) 50%, rgba(9,9,15,0) 100%)",
+      }}
+    >
       <div className="container">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-10"
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          style={{ textAlign: "center", marginBottom: "60px" }}
         >
-          <span className="badge badge-primary mb-3">🗂️ Browse by Category</span>
-          <h2
-            className="text-3xl md:text-4xl font-black text-[#f1f1f5]"
-            style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
-          >
-            Find What <span className="gradient-text">Inspires You</span>
+          <span className="badge badge-primary" style={{ marginBottom: "14px", display: "inline-flex", fontSize: "12px" }}>🗂️ Browse by Category</span>
+          <h2 style={{ fontFamily: "Plus Jakarta Sans, Inter, sans-serif", fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", fontWeight: 900, color: "#f1f1f5", letterSpacing: "-0.02em" }}>
+            Find What{" "}
+            <span style={{ background: "linear-gradient(135deg,#6c47ff,#a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              Inspires You
+            </span>
           </h2>
-          <p className="text-[#8b8ba8] mt-3 max-w-md mx-auto">
+          <p style={{ color: "#8b8ba8", marginTop: "12px", fontSize: "1rem", maxWidth: "500px", margin: "12px auto 0" }}>
             From groundbreaking tech to grassroots community projects — there's something for everyone.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+        {/* Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
           {categories.map((cat, i) => (
             <motion.div
               key={cat.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.06 }}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ delay: i * 0.07, duration: 0.45 }}
             >
               <Link
                 href={cat.href}
-                className="flex flex-col items-center gap-3 p-4 glass-card text-center group hover:border-[rgba(255,255,255,0.2)] transition-all duration-200"
                 id={`category-${cat.name.toLowerCase()}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "16px",
+                  padding: "22px 24px",
+                  background: cat.bg,
+                  border: `1px solid ${cat.border}`,
+                  borderRadius: "18px",
+                  textDecoration: "none",
+                  transition: "all 0.25s ease",
+                  backdropFilter: "blur(10px)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = `0 12px 36px ${cat.color}20`;
+                  e.currentTarget.style.borderColor = `${cat.color}45`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = cat.border;
+                }}
               >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                  style={{
-                    background: `${cat.color}18`,
-                    color: cat.color,
-                    border: `1px solid ${cat.color}30`,
-                  }}
-                >
+                {/* Icon box */}
+                <div style={{
+                  width: "52px", height: "52px", borderRadius: "14px", flexShrink: 0,
+                  background: `${cat.color}18`,
+                  border: `1px solid ${cat.color}30`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: cat.color,
+                  transition: "transform 0.25s ease",
+                }}>
                   {cat.icon}
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-[#f1f1f5]">{cat.name}</p>
-                  <p className="text-[10px] text-[#8b8ba8]">{cat.count} campaigns</p>
+
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 700, fontSize: "15px", color: "#f1f1f5", marginBottom: "3px" }}>
+                    {cat.name}
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#8b8ba8" }}>
+                    {cat.count} campaigns
+                  </p>
+                </div>
+
+                {/* Arrow indicator */}
+                <div style={{
+                  width: "28px", height: "28px", borderRadius: "8px",
+                  background: `${cat.color}12`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: cat.color, fontSize: "14px", flexShrink: 0,
+                }}>
+                  →
                 </div>
               </Link>
             </motion.div>
           ))}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.6 }}
+          style={{ textAlign: "center", marginTop: "48px" }}
+        >
+          <Link href="/campaigns" className="btn-secondary" style={{ display: "inline-flex", gap: "8px" }}>
+            Browse All Campaigns →
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
