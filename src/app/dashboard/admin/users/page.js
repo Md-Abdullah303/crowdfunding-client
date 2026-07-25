@@ -10,6 +10,7 @@ export default function UserManagementPage() {
   const [usersList, setUsersList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [deleteUserId, setDeleteUserId] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -46,13 +47,12 @@ export default function UserManagementPage() {
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
-    
     try {
       const res = await api.delete(`/api/users/${userId}`);
       if (res.data.success) {
         toast.success("User deleted successfully");
         setUsersList(usersList.filter(u => u._id !== userId));
+        setDeleteUserId(null);
       } else {
         toast.error(res.data.message || "Failed to delete user");
       }
@@ -172,7 +172,7 @@ export default function UserManagementPage() {
                     <td style={{ padding: "16px 24px", textAlign: "right" }}>
                       <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
                         <button 
-                          onClick={() => handleDeleteUser(user._id)}
+                          onClick={() => setDeleteUserId(user._id)}
                           disabled={user.email === "admin@admin.com"}
                           style={{ 
                             background: "transparent", border: "none", color: user.email === "admin@admin.com" ? "rgba(239,68,68,0.3)" : "#ef4444", 
@@ -201,6 +201,57 @@ export default function UserManagementPage() {
           </div>
         )}
       </div>
+
+      {/* Shadcn-like Alert Dialog */}
+      {deleteUserId && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(0, 0, 0, 0.8)", backdropFilter: "blur(4px)"
+        }}>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              background: "#13131f", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "16px", padding: "24px", width: "90%", maxWidth: "420px",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
+            }}
+          >
+            <h2 style={{ margin: "0 0 12px 0", fontSize: "18px", fontWeight: 700, color: "#fff" }}>
+              Are you absolutely sure?
+            </h2>
+            <p style={{ margin: "0 0 24px 0", fontSize: "14px", color: "#8b8ba8", lineHeight: 1.5 }}>
+              This action cannot be undone. This will permanently delete the user's account and remove their data from our servers.
+            </p>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+              <button 
+                onClick={() => setDeleteUserId(null)}
+                style={{
+                  background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#f1f1f5",
+                  padding: "10px 16px", borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => handleDeleteUser(deleteUserId)}
+                style={{
+                  background: "#ef4444", border: "none", color: "#fff",
+                  padding: "10px 16px", borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "#dc2626"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "#ef4444"}
+              >
+                Continue
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }
