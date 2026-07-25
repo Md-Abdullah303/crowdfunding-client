@@ -45,6 +45,9 @@ export default function Navbar() {
     setDropdownOpen(false);
   }, [pathname]);
 
+  const showNav = pathname === "/" || pathname.startsWith("/campaigns");
+  if (!showNav) return null;
+
   const handleSignOut = async () => {
     await signOut();
     setDropdownOpen(false);
