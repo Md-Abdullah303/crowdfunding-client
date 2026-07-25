@@ -15,7 +15,9 @@ import {
   X,
   Activity,
   History,
-  Home
+  Home,
+  FolderKanban,
+  PieChart
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -28,7 +30,15 @@ export default function DashboardLayout({ children }) {
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems = [
+  const role = user?.role || "supporter";
+
+  const navItems = role === "creator" ? [
+    { name: "Overview", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
+    { name: "My Campaigns", href: "/dashboard/my-campaigns", icon: <FolderKanban size={18} /> },
+    { name: "Earnings", href: "/dashboard/earnings", icon: <PieChart size={18} /> },
+    { name: "Wallet & Credits", href: "/dashboard/wallet", icon: <Wallet size={18} /> },
+    { name: "Account Settings", href: "/dashboard/settings", icon: <Settings size={18} /> },
+  ] : [
     { name: "Overview", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "My Contributions", href: "/dashboard/contributions", icon: <Heart size={18} /> },
     { name: "Transaction History", href: "/dashboard/history", icon: <History size={18} /> },
