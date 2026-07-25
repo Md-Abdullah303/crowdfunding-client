@@ -151,15 +151,14 @@ export default function UserManagementPage() {
                         disabled={user.email === "admin@admin.com"}
                         style={{
                           padding: "6px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: 600, textTransform: "capitalize",
-                          background: user.role === "admin" ? "rgba(108,71,255,0.1)" : user.role === "creator" ? "rgba(244,63,94,0.1)" : "rgba(16,185,129,0.1)",
+                          background: user.role === "admin" ? "rgba(108,71,255,0.15)" : user.role === "creator" ? "rgba(244,63,94,0.15)" : "rgba(16,185,129,0.15)",
                           color: user.role === "admin" ? "#a855f7" : user.role === "creator" ? "#f43f5e" : "#10b981", 
-                          border: "1px solid transparent", outline: "none", cursor: user.email === "admin@admin.com" ? "not-allowed" : "pointer",
-                          appearance: "none"
+                          border: "1px solid transparent", outline: "none", cursor: user.email === "admin@admin.com" ? "not-allowed" : "pointer"
                         }}
                       >
-                        <option value="admin">Admin</option>
-                        <option value="creator">Creator</option>
-                        <option value="supporter">Supporter</option>
+                        <option value="admin" style={{ background: "#151521", color: "#a855f7" }}>Admin</option>
+                        <option value="creator" style={{ background: "#151521", color: "#f43f5e" }}>Creator</option>
+                        <option value="supporter" style={{ background: "#151521", color: "#10b981" }}>Supporter</option>
                       </select>
                     </td>
                     <td style={{ padding: "16px 24px" }}>
