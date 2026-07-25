@@ -94,15 +94,26 @@ export default function DashboardLayout({ children }) {
         {/* User Card (Sidebar top) */}
         <div style={{ padding: "24px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{
-              width: "44px", height: "44px", borderRadius: "14px",
-              background: "linear-gradient(135deg,#6c47ff,#a855f7)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#fff", fontSize: "16px", fontWeight: 700,
-              boxShadow: "0 4px 14px rgba(108,71,255,0.3)"
-            }}>
-              {user?.name?.[0]?.toUpperCase() || "U"}
-            </div>
+            {user?.image ? (
+              <img 
+                src={user.image} 
+                alt={user.name || "User"} 
+                style={{ 
+                  width: "44px", height: "44px", borderRadius: "14px", 
+                  objectFit: "cover", boxShadow: "0 4px 14px rgba(0,0,0,0.3)" 
+                }} 
+              />
+            ) : (
+              <div style={{
+                width: "44px", height: "44px", borderRadius: "14px",
+                background: "linear-gradient(135deg,#6c47ff,#a855f7)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#fff", fontSize: "16px", fontWeight: 700,
+                boxShadow: "0 4px 14px rgba(108,71,255,0.3)"
+              }}>
+                {user?.name?.[0]?.toUpperCase() || "U"}
+              </div>
+            )}
             <div>
               <h3 style={{ fontSize: "14px", fontWeight: 700, color: "#f1f1f5", margin: 0, lineHeight: 1.2 }}>
                 {user?.name || "Loading..."}
