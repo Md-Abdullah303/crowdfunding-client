@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Search, Filter, Shield, Trash2, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import api from "@/lib/axios";
 
 export default function UserManagementPage() {
   const [usersList, setUsersList] = useState([]);
@@ -13,19 +14,14 @@ export default function UserManagementPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/users", {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
-        }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setUsersList(data.data);
+      const res = await api.get("/api/users");
+      if (res.data.success) {
+        setUsersList(res.data.data);
       } else {
-        toast.error(data.message || "Failed to fetch users");
+        toast.error(res.data.message || "Failed to fetch users");
       }
     } catch (error) {
-      toast.error("Error connecting to server");
+      toast.error(error.response?.data?.message || "Error connecting to server");
     } finally {
       setLoading(false);
     }
@@ -37,23 +33,15 @@ export default function UserManagementPage() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}/role`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
-        },
-        body: JSON.stringify({ role: newRole })
-      });
-      const data = await res.json();
-      if (data.success) {
+      const res = await api.patch(`/api/users/${userId}/role`, { role: newRole });
+      if (res.data.success) {
         toast.success("Role updated successfully");
         setUsersList(usersList.map(u => u._id === userId ? { ...u, role: newRole } : u));
       } else {
-        toast.error(data.message || "Failed to update role");
+        toast.error(res.data.message || "Failed to update role");
       }
     } catch (error) {
-      toast.error("Error updating role");
+      toast.error(error.response?.data?.message || "Error updating role");
     }
   };
 
@@ -61,21 +49,15 @@ export default function UserManagementPage() {
     if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
     
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
-        }
-      });
-      const data = await res.json();
-      if (data.success) {
+      const res = await api.delete(`/api/users/${userId}`);
+      if (res.data.success) {
         toast.success("User deleted successfully");
         setUsersList(usersList.filter(u => u._id !== userId));
       } else {
-        toast.error(data.message || "Failed to delete user");
+        toast.error(res.data.message || "Failed to delete user");
       }
     } catch (error) {
-      toast.error("Error deleting user");
+      toast.error(error.response?.data?.message || "Error deleting user");
     }
   };
 
