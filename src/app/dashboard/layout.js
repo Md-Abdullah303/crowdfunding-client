@@ -17,7 +17,10 @@ import {
   History,
   Home,
   FolderKanban,
-  PieChart
+  PieChart,
+  Users,
+  Layers,
+  Shield
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -32,7 +35,13 @@ export default function DashboardLayout({ children }) {
 
   const role = user?.role || "supporter";
 
-  const navItems = role === "creator" ? [
+  const navItems = role === "admin" ? [
+    { name: "Overview", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
+    { name: "User Management", href: "/dashboard/users", icon: <Users size={18} /> },
+    { name: "All Campaigns", href: "/dashboard/all-campaigns", icon: <Layers size={18} /> },
+    { name: "Platform Settings", href: "/dashboard/platform-settings", icon: <Shield size={18} /> },
+    { name: "Account Settings", href: "/dashboard/settings", icon: <Settings size={18} /> },
+  ] : role === "creator" ? [
     { name: "Overview", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "My Campaigns", href: "/dashboard/my-campaigns", icon: <FolderKanban size={18} /> },
     { name: "Earnings", href: "/dashboard/earnings", icon: <PieChart size={18} /> },
