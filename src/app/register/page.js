@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, User, UserCircle2, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, UserCircle2, ArrowRight, Home } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
@@ -67,6 +67,26 @@ export default function RegisterPage() {
       position: "relative",
       overflow: "hidden",
     }}>
+      {/* Back to Home Button */}
+      <Link href="/" style={{
+        position: "absolute", top: "24px", left: "24px", zIndex: 10,
+        display: "flex", alignItems: "center", gap: "8px",
+        padding: "10px 16px", borderRadius: "12px", textDecoration: "none",
+        background: "rgba(15,15,26,0.6)", border: "1px solid rgba(255,255,255,0.1)",
+        color: "#f1f1f5", fontSize: "14px", fontWeight: 600, backdropFilter: "blur(12px)",
+        transition: "all 0.2s"
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "rgba(15,15,26,0.6)";
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+      }}>
+        <Home size={16} /> Home
+      </Link>
+
       {/* Background orbs */}
       <div style={{ position: "absolute", top: "-10%", right: "-5%", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: "-10%", left: "-5%", width: "400px", height: "400px", borderRadius: "50%", background: "radial-gradient(circle, rgba(108,71,255,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />

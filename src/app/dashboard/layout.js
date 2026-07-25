@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   Activity,
-  History
+  History,
+  Home
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -129,12 +130,31 @@ export default function DashboardLayout({ children }) {
         </div>
 
         {/* Bottom Actions */}
-        <div style={{ padding: "20px 12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div style={{ padding: "20px 12px", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <Link href="/" style={{
+            display: "flex", alignItems: "center", gap: "12px", width: "100%",
+            padding: "12px 14px", borderRadius: "12px", textDecoration: "none",
+            color: "#f1f1f5", background: "transparent", border: "1px solid rgba(255,255,255,0.05)",
+            fontSize: "13.5px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s",
+            boxSizing: "border-box"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+          }}>
+            <Home size={18} /> Back to Home
+          </Link>
+
           <button onClick={handleSignOut} style={{
             display: "flex", alignItems: "center", gap: "12px", width: "100%",
             padding: "12px 14px", borderRadius: "12px",
             color: "#ef4444", background: "rgba(239,68,68,0.05)", border: "1px solid transparent",
             fontSize: "13.5px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s",
+            boxSizing: "border-box"
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = "rgba(239,68,68,0.1)";
