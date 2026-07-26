@@ -154,7 +154,7 @@ function CampaignCard({ campaign, index }) {
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }
 
