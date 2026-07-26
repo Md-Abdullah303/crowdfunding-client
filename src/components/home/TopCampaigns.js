@@ -98,17 +98,18 @@ function CampaignCard({ campaign, index }) {
       className="group cursor-pointer"
       style={{
         background: "rgba(15,15,26,0.8)",
-        borderRadius: "20px",
+        borderRadius: "24px",
         overflow: "hidden",
         border: "1px solid rgba(255,255,255,0.06)",
         boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
         display: "flex",
         flexDirection: "column",
+        height: "400px",
         transition: "transform 0.3s ease, box-shadow 0.3s ease"
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-6px)";
-        e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.5)";
+        e.currentTarget.style.transform = "translateY(-8px)";
+        e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.6)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "none";
@@ -118,38 +119,38 @@ function CampaignCard({ campaign, index }) {
       <Link href={`/campaigns/${campaign.id}`} style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none" }}>
         
         {/* Top Image Section */}
-        <div style={{ position: "relative", height: "200px", width: "100%", overflow: "hidden" }}>
+        <div style={{ position: "relative", height: "220px", width: "100%", overflow: "hidden" }}>
           <img
             src={campaign.coverImage}
             alt={campaign.title}
             style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s" }}
-            className="group-hover:scale-105"
+            className="group-hover:scale-110"
           />
           
           {/* Top Badges */}
-          <div style={{ position: "absolute", top: "12px", left: "12px" }}>
+          <div style={{ position: "absolute", top: "16px", left: "16px" }}>
             <span style={{ 
               background: cat.bg, color: cat.text, border: `1px solid ${cat.border}`,
-              padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", backdropFilter: "blur(4px)"
+              padding: "6px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", backdropFilter: "blur(4px)"
             }}>
               {campaign.category}
             </span>
           </div>
           
           <div style={{ 
-            position: "absolute", top: "12px", right: "12px",
-            background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff",
-            padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", backdropFilter: "blur(4px)"
+            position: "absolute", top: "16px", right: "16px",
+            background: "rgba(0,0,0,0.7)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff",
+            padding: "6px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", backdropFilter: "blur(4px)"
           }}>
-            <Clock size={12} style={{ color: "#a855f7" }} />
+            <Clock size={14} style={{ color: "#a855f7" }} />
             {daysLeft}d left
           </div>
         </div>
 
         {/* Bottom Content Section */}
-        <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column", background: "linear-gradient(180deg, rgba(15,15,26,0) 0%, rgba(9,9,15,0.8) 100%)" }}>
           <h3 style={{ 
-            fontSize: "18px", fontWeight: 700, color: "#f1f1f5", margin: "0 0 8px 0", lineHeight: 1.3,
+            fontSize: "20px", fontWeight: 700, color: "#f1f1f5", margin: "0 0 10px 0", lineHeight: 1.35,
             display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
           }}
           className="group-hover:text-[#a855f7] transition-colors"
@@ -157,17 +158,17 @@ function CampaignCard({ campaign, index }) {
             {campaign.title}
           </h3>
           
-          <p style={{ fontSize: "13px", color: "#8b8ba8", margin: "0 0 20px 0" }}>
+          <p style={{ fontSize: "14px", color: "#8b8ba8", margin: "0 0 16px 0" }}>
             by <span style={{ color: "#d4d4e0", fontWeight: 600 }}>{campaign.creator.name}</span>
           </p>
 
           <div style={{ marginTop: "auto" }}>
             {/* Custom Progress Bar */}
-            <div style={{ width: "100%", height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "4px", overflow: "hidden", marginBottom: "10px" }}>
+            <div style={{ width: "100%", height: "8px", background: "rgba(255,255,255,0.06)", borderRadius: "6px", overflow: "hidden", marginBottom: "12px" }}>
               <div style={{ 
                 height: "100%", width: `${progress}%`,
-                background: "linear-gradient(90deg, #6c47ff, #a855f7)", borderRadius: "4px",
-                boxShadow: "0 0 8px rgba(168,85,247,0.5)"
+                background: "linear-gradient(90deg, #6c47ff, #a855f7)", borderRadius: "6px",
+                boxShadow: "0 0 12px rgba(168,85,247,0.6)"
               }} />
             </div>
 
@@ -190,9 +191,9 @@ function CampaignCard({ campaign, index }) {
 export default function TopCampaigns() {
   return (
     <section className="section" id="top-campaigns">
-      <div className="container">
+      <div className="container ">
         {/* Section Header */}
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end gap-4 justify-between mb-20">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -219,7 +220,7 @@ export default function TopCampaigns() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {MOCK_CAMPAIGNS.map((c, i) => (
             <CampaignCard key={c.id} campaign={c} index={i} />
           ))}
