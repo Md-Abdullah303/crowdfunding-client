@@ -95,92 +95,65 @@ function CampaignCard({ campaign, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.5 }}
-      className="group cursor-pointer flex flex-col h-full"
-      style={{
-        background: "rgba(15,15,26,0.8)",
-        borderRadius: "20px",
-        border: "1px solid rgba(255,255,255,0.06)",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        overflow: "hidden"
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-6px)";
-        e.currentTarget.style.boxShadow = "0 16px 32px rgba(0,0,0,0.5)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "none";
-        e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
-      }}
+      className="group cursor-pointer flex flex-col h-full bg-[#0f0f1a]/80 rounded-[20px] border border-white/5 overflow-hidden shadow-lg hover:-translate-y-1.5 hover:shadow-2xl transition-all duration-300"
     >
-      <Link href={`/campaigns/${campaign.id}`} style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none" }}>
+      <Link href={`/campaigns/${campaign.id}`} className="flex flex-col h-full">
         
         {/* Top Image Section */}
-        <div style={{ position: "relative", height: "180px", width: "100%", overflow: "hidden", flexShrink: 0 }}>
+        <div className="relative h-[180px] w-full overflow-hidden shrink-0">
           <img
             src={campaign.coverImage}
             alt={campaign.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s" }}
-            className="group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           
-          <div style={{ position: "absolute", top: "12px", left: "12px" }}>
-            <span style={{ 
-              background: cat.bg, color: cat.text, border: `1px solid ${cat.border}`,
-              padding: "4px 10px", borderRadius: "20px", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", backdropFilter: "blur(4px)"
-            }}>
+          <div className="absolute top-3 left-3">
+            <span 
+              className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm border"
+              style={{ background: cat.bg, color: cat.text, borderColor: cat.border }}
+            >
               {campaign.category}
             </span>
           </div>
           
-          <div style={{ 
-            position: "absolute", top: "12px", right: "12px",
-            background: "rgba(0,0,0,0.7)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff",
-            padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", backdropFilter: "blur(4px)"
-          }}>
-            <Clock size={12} style={{ color: "#a855f7" }} />
+          <div className="absolute top-3 right-3 bg-black/70 border border-white/10 text-white px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 backdrop-blur-sm">
+            <Clock size={12} className="text-[#a855f7]" />
             {daysLeft}d left
           </div>
         </div>
 
         {/* Bottom Content Section */}
-        <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
-          <h3 style={{ 
-            fontSize: "17px", fontWeight: 700, color: "#f1f1f5", margin: "0 0 6px 0", lineHeight: 1.4,
-            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
-          }}
-          className="group-hover:text-[#a855f7] transition-colors"
-          >
+        <div className="p-5 flex-1 flex flex-col">
+          <h3 className="text-[17px] font-bold text-[#f1f1f5] mb-1.5 leading-snug line-clamp-2 overflow-hidden group-hover:text-[#a855f7] transition-colors">
             {campaign.title}
           </h3>
           
-          <p style={{ fontSize: "13px", color: "#8b8ba8", margin: "0 0 16px 0" }}>
-            by <span style={{ color: "#d4d4e0", fontWeight: 600 }}>{campaign.creator.name}</span>
+          <p className="text-[13px] text-[#8b8ba8] mb-4">
+            by <span className="text-[#d4d4e0] font-semibold">{campaign.creator.name}</span>
           </p>
 
-          <div style={{ marginTop: "auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
+          <div className="mt-auto">
+            <div className="flex justify-between items-end mb-2">
               <div>
-                <div style={{ color: "#8b8ba8", fontSize: "11px", fontWeight: 500, marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Raised</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#10b981", fontSize: "15px", fontWeight: 700 }}>
+                <div className="text-[#8b8ba8] text-[11px] font-medium mb-0.5 uppercase tracking-wide">Raised</div>
+                <div className="flex items-center gap-1 text-[#10b981] text-[15px] font-bold">
                   <Coins size={14} />
                   ${campaign.raisedAmount.toLocaleString()}
                 </div>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ color: "#8b8ba8", fontSize: "11px", fontWeight: 500, marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Goal</div>
-                <div style={{ color: "#f1f1f5", fontSize: "15px", fontWeight: 700 }}>
+              <div className="text-right">
+                <div className="text-[#8b8ba8] text-[11px] font-medium mb-0.5 uppercase tracking-wide">Goal</div>
+                <div className="text-[#f1f1f5] text-[15px] font-bold">
                   {progress}%
                 </div>
               </div>
             </div>
 
-            <div style={{ width: "100%", height: "6px", background: "rgba(255,255,255,0.06)", borderRadius: "4px", overflow: "hidden" }}>
-              <div style={{ 
-                height: "100%", width: `${progress}%`,
-                background: "linear-gradient(90deg, #6c47ff, #a855f7)", borderRadius: "4px",
-                boxShadow: "0 0 8px rgba(168,85,247,0.5)"
-              }} />
+            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                style={{ width: `${progress}%` }} 
+              />
             </div>
           </div>
         </div>
