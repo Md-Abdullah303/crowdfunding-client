@@ -95,52 +95,65 @@ function CampaignCard({ campaign, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.5 }}
-      className="glass-card overflow-hidden group cursor-pointer"
+      className="relative overflow-hidden group cursor-pointer"
+      style={{
+        height: "340px",
+        borderRadius: "24px",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+        border: "1px solid rgba(255,255,255,0.05)"
+      }}
       id={`campaign-card-${campaign.id}`}
     >
-      <Link href={`/campaigns/${campaign.id}`}>
-        {/* Cover Image */}
-        <div className="relative h-44 overflow-hidden">
-          <img
-            src={campaign.coverImage}
-            alt={campaign.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090f]/70 via-transparent to-transparent" />
-          {/* Category badge */}
-          <div className="absolute top-3 left-3">
-            <span
-              className="badge text-xs capitalize"
-              style={{ background: cat.bg, color: cat.text, borderColor: cat.border }}
-            >
-              {campaign.category}
-            </span>
-          </div>
-          {/* Days left */}
-          <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-lg bg-[rgba(9,9,15,0.75)] backdrop-blur text-xs text-[#f1f1f5] font-medium">
-            <Clock size={10} />
+      <Link href={`/campaigns/${campaign.id}`} className="block w-full h-full">
+        {/* Full Cover Image */}
+        <img
+          src={campaign.coverImage}
+          alt={campaign.title}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05050A] via-[#05050A]/70 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-95" />
+
+        {/* Top Badges */}
+        <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+          <span
+            className="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-md"
+            style={{ background: cat.bg, color: cat.text, border: `1px solid ${cat.border}` }}
+          >
+            {campaign.category}
+          </span>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-xs text-white font-medium shadow-lg">
+            <Clock size={12} className="text-[#a855f7]" />
             {daysLeft}d left
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="font-semibold text-sm text-[#f1f1f5] leading-snug line-clamp-2 mb-1 group-hover:text-[#8b6bff] transition-colors">
+        {/* Bottom Content Area */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-10 flex flex-col justify-end">
+          <h3 className="font-bold text-lg text-white leading-tight line-clamp-2 mb-1 group-hover:text-[#a855f7] transition-colors duration-300 shadow-sm">
             {campaign.title}
           </h3>
-          <p className="text-xs text-[#8b8ba8] mb-3">by {campaign.creator.name}</p>
+          <p className="text-sm text-gray-300 mb-4 font-medium">by <span className="text-white">{campaign.creator.name}</span></p>
 
-          {/* Progress */}
-          <div className="progress-bar mb-2">
-            <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+          {/* Progress Bar & Stats */}
+          <div className="w-full bg-white/10 rounded-full h-1.5 mb-3 overflow-hidden backdrop-blur-sm">
+            <div 
+              className="h-full rounded-full transition-all duration-1000 ease-out relative"
+              style={{ 
+                width: `${progress}%`,
+                background: "linear-gradient(90deg, #6c47ff, #a855f7)",
+                boxShadow: "0 0 10px rgba(168,85,247,0.5)"
+              }} 
+            />
           </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1 font-bold text-[#f1f1f5]">
-              <Coins size={11} className="text-[#6c47ff]" />
-              {campaign.raisedAmount.toLocaleString()} raised
+          <div className="flex items-center justify-between text-[13px]">
+            <div className="flex items-center gap-1.5 font-bold text-white">
+              <Coins size={14} className="text-[#a855f7]" />
+              ${campaign.raisedAmount.toLocaleString()} <span className="text-gray-400 font-normal ml-0.5">raised</span>
             </div>
-            <span className="text-[#8b8ba8]">{progress}% of goal</span>
+            <span className="font-bold text-[#a855f7]">{progress}% <span className="text-gray-400 font-normal">of goal</span></span>
           </div>
         </div>
       </Link>
