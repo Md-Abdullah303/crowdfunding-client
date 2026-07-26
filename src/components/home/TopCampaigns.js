@@ -90,11 +90,7 @@ function CampaignCard({ campaign, index }) {
   const cat = CATEGORY_COLORS[campaign.category] || CATEGORY_COLORS.other;
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.08, duration: 0.5 }}
+    <article
       className="group cursor-pointer flex flex-col h-full bg-[#0f0f1a]/80 rounded-[20px] border border-white/5 overflow-hidden shadow-lg hover:-translate-y-1.5 hover:shadow-2xl transition-all duration-300"
     >
       <Link href={`/campaigns/${campaign.id}`} className="flex flex-col h-full">
@@ -194,7 +190,7 @@ export default function TopCampaigns() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
           {MOCK_CAMPAIGNS.map((c, i) => (
             <CampaignCard key={c.id} campaign={c} index={i} />
           ))}
