@@ -120,7 +120,14 @@ export default function MyCampaignsPage() {
         toast.success("Campaign created and pending approval!");
         setIsModalOpen(false);
         setFormData({ title: "", description: "", category: "technology", goalAmount: "", deadline: "", coverImage: "" });
-        fetchCampaigns();
+        
+        // Reset search and pagination to show the newly created campaign at the top
+        setSearchQuery("");
+        setDebouncedSearch("");
+        setPage(1);
+        
+        // We don't need to manually call fetchCampaigns() here because setting debouncedSearch and page
+        // will automatically trigger the useEffect that fetches campaigns!
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create campaign");
@@ -147,6 +154,9 @@ export default function MyCampaignsPage() {
               placeholder="Search campaigns..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
               style={{
                 background: "rgba(15,15,26,0.6)", border: "1px solid rgba(255,255,255,0.06)",
                 padding: "10px 14px 10px 38px", borderRadius: "10px", color: "#f1f1f5",
