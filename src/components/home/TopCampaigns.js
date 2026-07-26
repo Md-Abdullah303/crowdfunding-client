@@ -95,65 +95,91 @@ function CampaignCard({ campaign, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.5 }}
-      className="relative overflow-hidden group cursor-pointer"
+      className="group cursor-pointer"
       style={{
-        height: "340px",
-        borderRadius: "24px",
-        boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-        border: "1px solid rgba(255,255,255,0.05)"
+        background: "rgba(15,15,26,0.8)",
+        borderRadius: "20px",
+        overflow: "hidden",
+        border: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+        display: "flex",
+        flexDirection: "column",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease"
       }}
-      id={`campaign-card-${campaign.id}`}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-6px)";
+        e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.5)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "none";
+        e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+      }}
     >
-      <Link href={`/campaigns/${campaign.id}`} className="block w-full h-full">
-        {/* Full Cover Image */}
-        <img
-          src={campaign.coverImage}
-          alt={campaign.title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+      <Link href={`/campaigns/${campaign.id}`} style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none" }}>
         
-        {/* Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#05050A] via-[#05050A]/70 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-95" />
-
-        {/* Top Badges */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
-          <span
-            className="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-md"
-            style={{ background: cat.bg, color: cat.text, border: `1px solid ${cat.border}` }}
-          >
-            {campaign.category}
-          </span>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-xs text-white font-medium shadow-lg">
-            <Clock size={12} className="text-[#a855f7]" />
+        {/* Top Image Section */}
+        <div style={{ position: "relative", height: "200px", width: "100%", overflow: "hidden" }}>
+          <img
+            src={campaign.coverImage}
+            alt={campaign.title}
+            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s" }}
+            className="group-hover:scale-105"
+          />
+          
+          {/* Top Badges */}
+          <div style={{ position: "absolute", top: "12px", left: "12px" }}>
+            <span style={{ 
+              background: cat.bg, color: cat.text, border: `1px solid ${cat.border}`,
+              padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", backdropFilter: "blur(4px)"
+            }}>
+              {campaign.category}
+            </span>
+          </div>
+          
+          <div style={{ 
+            position: "absolute", top: "12px", right: "12px",
+            background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff",
+            padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 600, display: "flex", alignItems: "center", gap: "4px", backdropFilter: "blur(4px)"
+          }}>
+            <Clock size={12} style={{ color: "#a855f7" }} />
             {daysLeft}d left
           </div>
         </div>
 
-        {/* Bottom Content Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 z-10 flex flex-col justify-end">
-          <h3 className="font-bold text-lg text-white leading-tight line-clamp-2 mb-1 group-hover:text-[#a855f7] transition-colors duration-300 shadow-sm">
+        {/* Bottom Content Section */}
+        <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
+          <h3 style={{ 
+            fontSize: "18px", fontWeight: 700, color: "#f1f1f5", margin: "0 0 8px 0", lineHeight: 1.3,
+            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
+          }}
+          className="group-hover:text-[#a855f7] transition-colors"
+          >
             {campaign.title}
           </h3>
-          <p className="text-sm text-gray-300 mb-4 font-medium">by <span className="text-white">{campaign.creator.name}</span></p>
+          
+          <p style={{ fontSize: "13px", color: "#8b8ba8", margin: "0 0 20px 0" }}>
+            by <span style={{ color: "#d4d4e0", fontWeight: 600 }}>{campaign.creator.name}</span>
+          </p>
 
-          {/* Progress Bar & Stats */}
-          <div className="w-full bg-white/10 rounded-full h-1.5 mb-3 overflow-hidden backdrop-blur-sm">
-            <div 
-              className="h-full rounded-full transition-all duration-1000 ease-out relative"
-              style={{ 
-                width: `${progress}%`,
-                background: "linear-gradient(90deg, #6c47ff, #a855f7)",
-                boxShadow: "0 0 10px rgba(168,85,247,0.5)"
-              }} 
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-[13px]">
-            <div className="flex items-center gap-1.5 font-bold text-white">
-              <Coins size={14} className="text-[#a855f7]" />
-              ${campaign.raisedAmount.toLocaleString()} <span className="text-gray-400 font-normal ml-0.5">raised</span>
+          <div style={{ marginTop: "auto" }}>
+            {/* Custom Progress Bar */}
+            <div style={{ width: "100%", height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "4px", overflow: "hidden", marginBottom: "10px" }}>
+              <div style={{ 
+                height: "100%", width: `${progress}%`,
+                background: "linear-gradient(90deg, #6c47ff, #a855f7)", borderRadius: "4px",
+                boxShadow: "0 0 8px rgba(168,85,247,0.5)"
+              }} />
             </div>
-            <span className="font-bold text-[#a855f7]">{progress}% <span className="text-gray-400 font-normal">of goal</span></span>
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#f1f1f5", fontSize: "14px", fontWeight: 700 }}>
+                <Coins size={14} style={{ color: "#a855f7" }} />
+                ${campaign.raisedAmount.toLocaleString()} <span style={{ color: "#8b8ba8", fontSize: "12px", fontWeight: 500 }}>raised</span>
+              </div>
+              <div style={{ color: "#a855f7", fontSize: "14px", fontWeight: 700 }}>
+                {progress}% <span style={{ color: "#8b8ba8", fontSize: "12px", fontWeight: 500 }}>of goal</span>
+              </div>
+            </div>
           </div>
         </div>
       </Link>
