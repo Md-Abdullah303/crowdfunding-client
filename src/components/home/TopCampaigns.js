@@ -95,17 +95,14 @@ function CampaignCard({ campaign, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.5 }}
-      className="group cursor-pointer"
+      className="group cursor-pointer flex flex-col h-full"
       style={{
         background: "rgba(15,15,26,0.8)",
-        borderRadius: "24px",
-        overflow: "hidden",
+        borderRadius: "20px",
         border: "1px solid rgba(255,255,255,0.06)",
         boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-        display: "flex",
-        flexDirection: "column",
-        height: "400px",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease"
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        overflow: "hidden"
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-8px)";
@@ -119,7 +116,7 @@ function CampaignCard({ campaign, index }) {
       <Link href={`/campaigns/${campaign.id}`} style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none" }}>
         
         {/* Top Image Section */}
-        <div style={{ position: "relative", height: "220px", width: "100%", overflow: "hidden" }}>
+        <div style={{ position: "relative", height: "240px", width: "100%", overflow: "hidden", flexShrink: 0 }}>
           <img
             src={campaign.coverImage}
             alt={campaign.title}
@@ -127,11 +124,10 @@ function CampaignCard({ campaign, index }) {
             className="group-hover:scale-110"
           />
           
-          {/* Top Badges */}
           <div style={{ position: "absolute", top: "16px", left: "16px" }}>
             <span style={{ 
               background: cat.bg, color: cat.text, border: `1px solid ${cat.border}`,
-              padding: "6px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", backdropFilter: "blur(4px)"
+              padding: "6px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", backdropFilter: "blur(4px)"
             }}>
               {campaign.category}
             </span>
@@ -148,9 +144,9 @@ function CampaignCard({ campaign, index }) {
         </div>
 
         {/* Bottom Content Section */}
-        <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column", background: "linear-gradient(180deg, rgba(15,15,26,0) 0%, rgba(9,9,15,0.8) 100%)" }}>
+        <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
           <h3 style={{ 
-            fontSize: "20px", fontWeight: 700, color: "#f1f1f5", margin: "0 0 10px 0", lineHeight: 1.35,
+            fontSize: "20px", fontWeight: 700, color: "#f1f1f5", margin: "0 0 8px 0", lineHeight: 1.4,
             display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
           }}
           className="group-hover:text-[#a855f7] transition-colors"
@@ -158,28 +154,33 @@ function CampaignCard({ campaign, index }) {
             {campaign.title}
           </h3>
           
-          <p style={{ fontSize: "14px", color: "#8b8ba8", margin: "0 0 16px 0" }}>
+          <p style={{ fontSize: "14px", color: "#8b8ba8", margin: "0 0 24px 0" }}>
             by <span style={{ color: "#d4d4e0", fontWeight: 600 }}>{campaign.creator.name}</span>
           </p>
 
           <div style={{ marginTop: "auto" }}>
-            {/* Custom Progress Bar */}
-            <div style={{ width: "100%", height: "8px", background: "rgba(255,255,255,0.06)", borderRadius: "6px", overflow: "hidden", marginBottom: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "12px" }}>
+              <div>
+                <div style={{ color: "#8b8ba8", fontSize: "12px", fontWeight: 500, marginBottom: "4px" }}>Raised</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#f1f1f5", fontSize: "16px", fontWeight: 700 }}>
+                  <Coins size={16} style={{ color: "#a855f7" }} />
+                  ${campaign.raisedAmount.toLocaleString()}
+                </div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ color: "#8b8ba8", fontSize: "12px", fontWeight: 500, marginBottom: "4px" }}>Goal</div>
+                <div style={{ color: "#a855f7", fontSize: "16px", fontWeight: 700 }}>
+                  {progress}%
+                </div>
+              </div>
+            </div>
+
+            <div style={{ width: "100%", height: "8px", background: "rgba(255,255,255,0.08)", borderRadius: "6px", overflow: "hidden" }}>
               <div style={{ 
                 height: "100%", width: `${progress}%`,
                 background: "linear-gradient(90deg, #6c47ff, #a855f7)", borderRadius: "6px",
                 boxShadow: "0 0 12px rgba(168,85,247,0.6)"
               }} />
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#f1f1f5", fontSize: "14px", fontWeight: 700 }}>
-                <Coins size={14} style={{ color: "#a855f7" }} />
-                ${campaign.raisedAmount.toLocaleString()} <span style={{ color: "#8b8ba8", fontSize: "12px", fontWeight: 500 }}>raised</span>
-              </div>
-              <div style={{ color: "#a855f7", fontSize: "14px", fontWeight: 700 }}>
-                {progress}% <span style={{ color: "#8b8ba8", fontSize: "12px", fontWeight: 500 }}>of goal</span>
-              </div>
             </div>
           </div>
         </div>
