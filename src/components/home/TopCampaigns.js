@@ -90,80 +90,100 @@ function CampaignCard({ campaign, index }) {
   const cat = CATEGORY_COLORS[campaign.category] || CATEGORY_COLORS.other;
 
   return (
-    <article
-      className="group cursor-pointer flex flex-col h-full bg-[#0f0f1a]/80 rounded-[20px] border border-white/5 overflow-hidden shadow-lg hover:-translate-y-1.5 hover:shadow-2xl transition-all duration-300"
+    <motion.article
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
+      className="group cursor-pointer flex flex-col h-full bg-white/[0.02] backdrop-blur-xl rounded-[24px] border border-white/5 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-white/10 hover:shadow-[0_8px_30px_rgba(168,85,247,0.15)] hover:-translate-y-2 transition-all duration-500 relative"
     >
       <Link href={`/campaigns/${campaign.id}`} className="flex flex-col h-full">
         
         {/* Top Image Section */}
-        <div className="relative h-[180px] w-full overflow-hidden shrink-0">
+        <div className="relative h-[220px] w-full overflow-hidden shrink-0">
           <img
             src={campaign.coverImage}
             alt={campaign.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
+          {/* Gradient Overlay for bottom text transition */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0b0b14] via-transparent to-transparent opacity-80" />
           
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-4 left-4 z-20">
             <span 
-              className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm border"
+              className="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border shadow-sm"
               style={{ background: cat.bg, color: cat.text, borderColor: cat.border }}
             >
               {campaign.category}
             </span>
           </div>
           
-          <div className="absolute top-3 right-3 bg-black/70 border border-white/10 text-white px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 backdrop-blur-sm">
-            <Clock size={12} className="text-[#a855f7]" />
+          <div className="absolute top-4 right-4 z-20 bg-black/60 border border-white/10 text-white px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 backdrop-blur-md">
+            <Clock size={14} className="text-[#a855f7]" />
             {daysLeft}d left
           </div>
         </div>
 
         {/* Bottom Content Section */}
-        <div className="p-5 flex-1 flex flex-col">
-          <h3 className="text-[17px] font-bold text-[#f1f1f5] mb-1.5 leading-snug line-clamp-2 overflow-hidden group-hover:text-[#a855f7] transition-colors">
+        <div className="p-5 flex-1 flex flex-col relative z-20 -mt-6">
+          <h3 className="text-[19px] font-bold text-[#f1f1f5] mb-3 leading-snug line-clamp-2 overflow-hidden group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#a855f7] group-hover:to-[#6c47ff] transition-all duration-300 drop-shadow-sm">
             {campaign.title}
           </h3>
           
-          <p className="text-[13px] text-[#8b8ba8] mb-4">
-            by <span className="text-[#d4d4e0] font-semibold">{campaign.creator.name}</span>
-          </p>
+          <div className="flex items-center gap-2.5 mb-6">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#6c47ff] to-[#a855f7] flex items-center justify-center text-white text-[11px] font-bold shadow-md">
+              {campaign.creator.name.charAt(0)}
+            </div>
+            <p className="text-[13px] text-[#8b8ba8]">
+              by <span className="text-[#d4d4e0] font-semibold">{campaign.creator.name}</span>
+            </p>
+          </div>
 
           <div className="mt-auto">
-            <div className="flex justify-between items-end mb-2">
+            <div className="flex justify-between items-end mb-3">
               <div>
-                <div className="text-[#8b8ba8] text-[11px] font-medium mb-0.5 uppercase tracking-wide">Raised</div>
-                <div className="flex items-center gap-1 text-[#10b981] text-[15px] font-bold">
-                  <Coins size={14} />
+                <div className="text-[#8b8ba8] text-[11px] font-semibold mb-1 uppercase tracking-wider">Raised</div>
+                <div className="flex items-center gap-1.5 text-[#10b981] text-[17px] font-bold">
+                  <Coins size={15} />
                   ${campaign.raisedAmount.toLocaleString()}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[#8b8ba8] text-[11px] font-medium mb-0.5 uppercase tracking-wide">Goal</div>
-                <div className="text-[#f1f1f5] text-[15px] font-bold">
-                  {progress}%
+                <div className="text-[#8b8ba8] text-[11px] font-semibold mb-1 uppercase tracking-wider">Goal</div>
+                <div className="flex items-center gap-1.5 justify-end text-[#f1f1f5] text-[17px] font-bold">
+                  <Target size={15} className="text-[#a855f7]" />
+                  ${campaign.goalAmount.toLocaleString()}
                 </div>
               </div>
             </div>
 
-            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <div 
-                className="h-full rounded-full bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_0_8px_rgba(168,85,247,0.5)]"
-                style={{ width: `${progress}%` }} 
-              />
+            <div className="w-full h-2.5 bg-gray-800/60 rounded-full overflow-hidden relative border border-white/5">
+              <motion.div 
+                initial={{ width: 0 }}
+                whileInView={{ width: `${progress}%` }}
+                transition={{ duration: 1.2, ease: "easeOut", delay: 0.1 }}
+                viewport={{ once: true }}
+                className="h-full rounded-full bg-gradient-to-r from-[#6c47ff] to-[#a855f7] relative"
+              >
+                <div className="absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-white/40 rounded-full"></div>
+              </motion.div>
+            </div>
+            <div className="mt-2 text-right text-[11px] font-bold text-[#a855f7] tracking-wider uppercase">
+              {progress}% Funded
             </div>
           </div>
         </div>
       </Link>
-    </article>
+    </motion.article>
   );
 }
 
 export default function TopCampaigns() {
   return (
     <section className="section" id="top-campaigns">
-      <div className="container ">
+      <div className="container">
         {/* Section Header */}
-        <div className="flex items-end gap-4 justify-between mb-20">
+        <div className="flex items-end gap-4 justify-between mb-10">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -190,7 +210,7 @@ export default function TopCampaigns() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {MOCK_CAMPAIGNS.map((c, i) => (
             <CampaignCard key={c.id} campaign={c} index={i} />
           ))}
