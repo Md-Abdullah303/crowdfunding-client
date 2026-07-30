@@ -1,10 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Clock, Target, Coins } from "lucide-react";
 
-// Placeholder data — will be replaced by API call in Step 4/5
 const MOCK_CAMPAIGNS = [
   {
     id: "1",
@@ -69,14 +69,13 @@ const MOCK_CAMPAIGNS = [
 ];
 
 const CATEGORY_COLORS = {
-  environment: { bg: "rgba(34,197,94,0.12)", text: "#22c55e", border: "rgba(34,197,94,0.2)" },
-  technology: { bg: "rgba(59,130,246,0.12)", text: "#60a5fa", border: "rgba(59,130,246,0.2)" },
-  arts: { bg: "rgba(168,85,247,0.12)", text: "#c084fc", border: "rgba(168,85,247,0.2)" },
-  community: { bg: "rgba(245,158,11,0.12)", text: "#fbbf24", border: "rgba(245,158,11,0.2)" },
-  health: { bg: "rgba(239,68,68,0.12)", text: "#f87171", border: "rgba(239,68,68,0.2)" },
-  education: { bg: "rgba(20,184,166,0.12)", text: "#2dd4bf", border: "rgba(20,184,166,0.2)" },
-  business: { bg: "rgba(255,107,53,0.12)", text: "#ff8c5a", border: "rgba(255,107,53,0.2)" },
-  other: { bg: "rgba(139,139,168,0.12)", text: "#8b8ba8", border: "rgba(139,139,168,0.2)" },
+  environment: { bg: "rgba(34,197,94,0.15)", text: "#22c55e", border: "rgba(34,197,94,0.3)" },
+  technology:  { bg: "rgba(59,130,246,0.15)", text: "#60a5fa", border: "rgba(59,130,246,0.3)" },
+  arts:        { bg: "rgba(168,85,247,0.15)", text: "#c084fc", border: "rgba(168,85,247,0.3)" },
+  community:   { bg: "rgba(245,158,11,0.15)", text: "#fbbf24", border: "rgba(245,158,11,0.3)" },
+  health:      { bg: "rgba(239,68,68,0.15)",  text: "#f87171", border: "rgba(239,68,68,0.3)"  },
+  education:   { bg: "rgba(20,184,166,0.15)", text: "#2dd4bf", border: "rgba(20,184,166,0.3)" },
+  other:       { bg: "rgba(139,139,168,0.15)","text": "#8b8ba8", border: "rgba(139,139,168,0.3)" },
 };
 
 function getDaysLeft(deadline) {
@@ -85,6 +84,7 @@ function getDaysLeft(deadline) {
 }
 
 function CampaignCard({ campaign, index }) {
+  const [hovered, setHovered] = useState(false);
   const progress = Math.min(100, Math.round((campaign.raisedAmount / campaign.goalAmount) * 100));
   const daysLeft = getDaysLeft(campaign.deadline);
   const cat = CATEGORY_COLORS[campaign.category] || CATEGORY_COLORS.other;
@@ -95,80 +95,184 @@ function CampaignCard({ campaign, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-      className="group cursor-pointer flex flex-col h-full bg-white/[0.02] backdrop-blur-xl rounded-[24px] border border-white/5 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-white/10 hover:shadow-[0_8px_30px_rgba(168,85,247,0.15)] hover:-translate-y-2 transition-all duration-500 relative"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        background: hovered
+          ? "rgba(108,71,255,0.06)"
+          : "rgba(19,19,31,0.7)",
+        backdropFilter: "blur(16px)",
+        borderRadius: "24px",
+        border: hovered
+          ? "1px solid rgba(168,85,247,0.35)"
+          : "1px solid rgba(255,255,255,0.06)",
+        overflow: "hidden",
+        boxShadow: hovered
+          ? "0 20px 60px rgba(108,71,255,0.2)"
+          : "0 8px 30px rgba(0,0,0,0.2)",
+        transform: hovered ? "translateY(-6px)" : "translateY(0)",
+        transition: "all 0.4s cubic-bezier(0.23,1,0.32,1)",
+        cursor: "pointer",
+        position: "relative",
+      }}
     >
-      <Link href={`/campaigns/${campaign.id}`} className="flex flex-col h-full">
-        
-        {/* Top Image Section */}
-        <div className="relative h-[220px] w-full overflow-hidden shrink-0">
+      <Link href={`/campaigns/${campaign.id}`} style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none", color: "inherit" }}>
+
+        {/* Image */}
+        <div style={{ position: "relative", height: "220px", overflow: "hidden", flexShrink: 0 }}>
           <img
             src={campaign.coverImage}
             alt={campaign.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.7s ease",
+              transform: hovered ? "scale(1.08)" : "scale(1)",
+              display: "block",
+            }}
           />
-          {/* Gradient Overlay for bottom text transition */}
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0b0b14] via-transparent to-transparent opacity-80" />
-          
-          <div className="absolute top-4 left-4 z-20">
-            <span 
-              className="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider backdrop-blur-md border shadow-sm"
-              style={{ background: cat.bg, color: cat.text, borderColor: cat.border }}
-            >
+          {/* Gradient overlay */}
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 1,
+            background: "linear-gradient(to top, #0b0b14 0%, rgba(11,11,20,0.4) 50%, transparent 100%)",
+          }} />
+
+          {/* Category badge */}
+          <div style={{ position: "absolute", top: "14px", left: "14px", zIndex: 2 }}>
+            <span style={{
+              padding: "4px 12px",
+              borderRadius: "999px",
+              fontSize: "11px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              background: cat.bg,
+              color: cat.text,
+              border: `1px solid ${cat.border}`,
+              backdropFilter: "blur(10px)",
+            }}>
               {campaign.category}
             </span>
           </div>
-          
-          <div className="absolute top-4 right-4 z-20 bg-black/60 border border-white/10 text-white px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1.5 backdrop-blur-md">
-            <Clock size={14} className="text-[#a855f7]" />
+
+          {/* Days left */}
+          <div style={{
+            position: "absolute", top: "14px", right: "14px", zIndex: 2,
+            background: "rgba(0,0,0,0.65)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            color: "#fff",
+            padding: "4px 12px",
+            borderRadius: "999px",
+            fontSize: "11px",
+            fontWeight: 700,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            backdropFilter: "blur(10px)",
+          }}>
+            <Clock size={13} style={{ color: "#a855f7" }} />
             {daysLeft}d left
           </div>
         </div>
 
-        {/* Bottom Content Section */}
-        <div className="p-5 flex-1 flex flex-col relative z-20 -mt-6">
-          <h3 className="text-[19px] font-bold text-[#f1f1f5] mb-3 leading-snug line-clamp-2 overflow-hidden group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#a855f7] group-hover:to-[#6c47ff] transition-all duration-300 drop-shadow-sm">
+        {/* Content */}
+        <div style={{
+          padding: "20px 22px 22px",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          zIndex: 2,
+          marginTop: "-20px",
+        }}>
+          <h3 style={{
+            fontSize: "17px",
+            fontWeight: 800,
+            color: hovered ? "transparent" : "#f1f1f5",
+            background: hovered ? "linear-gradient(135deg, #a855f7, #6c47ff)" : "none",
+            WebkitBackgroundClip: hovered ? "text" : "unset",
+            WebkitTextFillColor: hovered ? "transparent" : "unset",
+            marginBottom: "12px",
+            lineHeight: 1.35,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            transition: "all 0.3s ease",
+            fontFamily: "Plus Jakarta Sans, Inter, sans-serif",
+          }}>
             {campaign.title}
           </h3>
-          
-          <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#6c47ff] to-[#a855f7] flex items-center justify-center text-white text-[11px] font-bold shadow-md">
+
+          {/* Creator */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+            <div style={{
+              width: "28px", height: "28px", borderRadius: "50%",
+              background: "linear-gradient(135deg, #6c47ff, #a855f7)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "11px", fontWeight: 800, color: "#fff", flexShrink: 0,
+            }}>
               {campaign.creator.name.charAt(0)}
             </div>
-            <p className="text-[13px] text-[#8b8ba8]">
-              by <span className="text-[#d4d4e0] font-semibold">{campaign.creator.name}</span>
+            <p style={{ fontSize: "13px", color: "#8b8ba8", margin: 0 }}>
+              by <span style={{ color: "#d4d4e0", fontWeight: 600 }}>{campaign.creator.name}</span>
             </p>
           </div>
 
-          <div className="mt-auto">
-            <div className="flex justify-between items-end mb-3">
+          {/* Stats */}
+          <div style={{ marginTop: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "10px" }}>
               <div>
-                <div className="text-[#8b8ba8] text-[11px] font-semibold mb-1 uppercase tracking-wider">Raised</div>
-                <div className="flex items-center gap-1.5 text-[#10b981] text-[17px] font-bold">
-                  <Coins size={15} />
+                <div style={{ fontSize: "10px", fontWeight: 700, color: "#8b8ba8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>Raised</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "17px", fontWeight: 800, color: "#10b981" }}>
+                  <Coins size={14} />
                   ${campaign.raisedAmount.toLocaleString()}
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[#8b8ba8] text-[11px] font-semibold mb-1 uppercase tracking-wider">Goal</div>
-                <div className="flex items-center gap-1.5 justify-end text-[#f1f1f5] text-[17px] font-bold">
-                  <Target size={15} className="text-[#a855f7]" />
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: "10px", fontWeight: 700, color: "#8b8ba8", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>Goal</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", justifyContent: "flex-end", fontSize: "17px", fontWeight: 800, color: "#f1f1f5" }}>
+                  <Target size={14} style={{ color: "#a855f7" }} />
                   ${campaign.goalAmount.toLocaleString()}
                 </div>
               </div>
             </div>
 
-            <div className="w-full h-2.5 bg-gray-800/60 rounded-full overflow-hidden relative border border-white/5">
-              <motion.div 
+            {/* Progress bar */}
+            <div style={{
+              width: "100%", height: "8px", background: "rgba(255,255,255,0.07)",
+              borderRadius: "999px", overflow: "hidden",
+              border: "1px solid rgba(255,255,255,0.05)",
+            }}>
+              <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: `${progress}%` }}
-                transition={{ duration: 1.2, ease: "easeOut", delay: 0.1 }}
+                transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
                 viewport={{ once: true }}
-                className="h-full rounded-full bg-gradient-to-r from-[#6c47ff] to-[#a855f7] relative"
+                style={{
+                  height: "100%",
+                  borderRadius: "999px",
+                  background: "linear-gradient(90deg, #6c47ff, #a855f7)",
+                  position: "relative",
+                }}
               >
-                <div className="absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-white/40 rounded-full"></div>
+                <div style={{
+                  position: "absolute", top: 0, right: 0, bottom: 0, width: "40px",
+                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.35))",
+                  borderRadius: "999px",
+                }} />
               </motion.div>
             </div>
-            <div className="mt-2 text-right text-[11px] font-bold text-[#a855f7] tracking-wider uppercase">
+
+            <div style={{
+              marginTop: "6px", textAlign: "right",
+              fontSize: "11px", fontWeight: 800,
+              color: "#a855f7", textTransform: "uppercase", letterSpacing: "0.06em",
+            }}>
               {progress}% Funded
             </div>
           </div>
@@ -180,47 +284,94 @@ function CampaignCard({ campaign, index }) {
 
 export default function TopCampaigns() {
   return (
-    <section className="section" id="top-campaigns">
+    <section
+      id="top-campaigns"
+      style={{
+        padding: "100px 0",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* BG glow orbs */}
+      <div style={{ position: "absolute", top: "20%", right: "-8%", width: "450px", height: "450px", borderRadius: "50%", background: "radial-gradient(circle, rgba(108,71,255,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "10%", left: "-8%", width: "350px", height: "350px", borderRadius: "50%", background: "radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+
       <div className="container">
-        {/* Section Header */}
-        <div className="flex items-end gap-4 justify-between mb-10">
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "48px", gap: "16px", flexWrap: "wrap" }}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
           >
-            <span className="badge badge-primary mb-3">🔥 Top Funded</span>
-            <h2
-              className="text-3xl md:text-4xl font-black text-[#f1f1f5] leading-tight"
-              style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
-            >
+            <span className="badge badge-primary" style={{ marginBottom: "14px", display: "inline-flex", fontSize: "12px" }}>🔥 Top Funded</span>
+            <h2 style={{
+              fontFamily: "Plus Jakarta Sans, Inter, sans-serif",
+              fontSize: "clamp(2rem, 4vw, 2.8rem)",
+              fontWeight: 900,
+              color: "#f1f1f5",
+              lineHeight: 1.1,
+              margin: 0,
+              letterSpacing: "-0.02em",
+            }}>
               Campaigns Making <br />
-              <span className="gradient-text">an Impact</span>
+              <span style={{
+                background: "linear-gradient(135deg, #6c47ff, #a855f7)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
+                an Impact
+              </span>
             </h2>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
           >
-            <Link href="/campaigns" className="btn-secondary text-sm hidden md:flex">
+            <Link
+              href="/campaigns"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "10px 22px",
+                borderRadius: "999px",
+                border: "1px solid rgba(108,71,255,0.4)",
+                color: "#a78bfa",
+                fontWeight: 700,
+                fontSize: "14px",
+                textDecoration: "none",
+                background: "rgba(108,71,255,0.08)",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(108,71,255,0.18)";
+                e.currentTarget.style.borderColor = "rgba(108,71,255,0.7)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(108,71,255,0.08)";
+                e.currentTarget.style.borderColor = "rgba(108,71,255,0.4)";
+              }}
+            >
               View All <ArrowRight size={15} />
             </Link>
           </motion.div>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Cards Grid */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: "24px",
+        }}>
           {MOCK_CAMPAIGNS.map((c, i) => (
             <CampaignCard key={c.id} campaign={c} index={i} />
           ))}
-        </div>
-
-        {/* Mobile CTA */}
-        <div className="mt-8 flex justify-center md:hidden">
-          <Link href="/campaigns" className="btn-secondary">
-            View All Campaigns <ArrowRight size={15} />
-          </Link>
         </div>
       </div>
     </section>

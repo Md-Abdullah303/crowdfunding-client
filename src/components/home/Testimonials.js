@@ -11,6 +11,7 @@ const testimonials = [
     role: "Creator",
     campaign: "EcoCharge Campaign",
     avatar: "SG",
+    photo: "https://randomuser.me/api/portraits/women/44.jpg",
     color: "#22c55e",
     rating: 5,
     text: "FundFlow completely transformed how I brought my solar project to life. The credit-based system is transparent, and we hit 84% of our goal in the first week!",
@@ -22,6 +23,7 @@ const testimonials = [
     role: "Supporter",
     campaign: "Backed 12 Campaigns",
     avatar: "JC",
+    photo: "https://randomuser.me/api/portraits/men/32.jpg",
     color: "#6c47ff",
     rating: 5,
     text: "The credit system lets me spread support across multiple projects without worrying about fees on every contribution. Genuinely one of the best platforms out there.",
@@ -33,6 +35,7 @@ const testimonials = [
     role: "Creator",
     campaign: "MediAssist Campaign",
     avatar: "PN",
+    photo: "https://randomuser.me/api/portraits/women/68.jpg",
     color: "#f59e0b",
     rating: 5,
     text: "FundFlow proved me wrong on credit-based crowdfunding. The registration bonus helped me start immediately, and the withdrawal process was smooth once we hit 200 credits.",
@@ -44,6 +47,7 @@ const testimonials = [
     role: "Supporter",
     campaign: "Community Champion",
     avatar: "AH",
+    photo: "https://randomuser.me/api/portraits/men/75.jpg",
     color: "#3b82f6",
     rating: 5,
     text: "Real-time notifications when my contributions are approved — I always know the status of campaigns I've backed. FundFlow feels like investing in something you care about.",
@@ -55,6 +59,7 @@ const testimonials = [
     role: "Creator",
     campaign: "ArtVault Campaign",
     avatar: "ML",
+    photo: "https://randomuser.me/api/portraits/women/90.jpg",
     color: "#a855f7",
     rating: 5,
     text: "FundFlow gave independent artists a real chance. My ArtVault campaign reached 96% funding. The dashboard is beautiful and super easy to use.",
@@ -160,8 +165,20 @@ export default function Testimonials() {
 
                 {/* Author */}
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: `${item.color}CC`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700, color: "#fff", flexShrink: 0 }}>
-                    {item.avatar}
+                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", flexShrink: 0, border: `2px solid ${item.color}55`, padding: "2px", background: `${item.color}18` }}>
+                    <img
+                      src={item.photo}
+                      alt={item.name}
+                      style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", display: "block" }}
+                      onError={e => {
+                        e.target.style.display = "none";
+                        e.target.parentNode.style.background = `${item.color}CC`;
+                        e.target.parentNode.style.display = "flex";
+                        e.target.parentNode.style.alignItems = "center";
+                        e.target.parentNode.style.justifyContent = "center";
+                        e.target.parentNode.innerHTML = `<span style="font-size:12px;font-weight:700;color:#fff">${item.avatar}</span>`;
+                      }}
+                    />
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: "13px", fontWeight: 700, color: "#f1f1f5", lineHeight: 1.2 }}>{item.name}</p>
