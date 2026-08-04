@@ -1,187 +1,193 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Lock, Bell, Shield, Save } from "lucide-react";
+import { User, Mail, Image as ImageIcon, Save, Loader2 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import api from "@/lib/axios";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
   const user = session?.user;
+  
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    notifications: true,
-    newsletter: false,
+    name: "",
+    image: "",
   });
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        image: user.image || "",
+      });
+    }
+  }, [user]);
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    if (!formData.name) {
+      toast.error("Name is required");
+      return;
+    }
+
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await api.patch("/api/users/me", {
+        name: formData.name,
+        image: formData.image,
+      });
+
+      if (response.data.success) {
+        toast.success("Profile updated successfully!");
+        // Reload to refresh the session data globally across the dashboard
+        window.location.reload();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update profile");
       setLoading(false);
-      toast.success("Settings saved successfully!");
-    }, 1000);
+    }
   };
+
+  if (!user) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+        <Loader2 className="animate-spin text-primary" size={40} />
+      </div>
+    );
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
+      style={{ maxWidth: "800px" }}
     >
       <div style={{ marginBottom: "32px" }}>
-        <h1 style={{ fontSize: "28px", fontWeight: 800, color: "#fff", margin: "0 0 8px 0" }}>Account Settings</h1>
-        <p style={{ color: "#8b8ba8", margin: 0, fontSize: "15px" }}>Manage your personal information and preferences.</p>
+        <h1 style={{ fontSize: "32px", fontWeight: 900, color: "#f1f1f5", margin: "0 0 12px 0" }}>Profile Settings</h1>
+        <p style={{ color: "#8b8ba8", margin: 0, fontSize: "16px" }}>
+          Update your creator profile information. This will be displayed on your campaigns.
+        </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
+      <div style={{
+        background: "rgba(19,19,31,0.6)", border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: "24px", padding: "40px", backdropFilter: "blur(16px)",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
+      }}>
         
-        {/* Profile Details */}
-        <div style={{
-          background: "rgba(15,15,26,0.6)", border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: "24px", padding: "32px", backdropFilter: "blur(10px)",
-          boxShadow: "0 10px 40px rgba(0,0,0,0.2)", flex: 2
-        }}>
-          <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", margin: "0 0 24px 0", display: "flex", alignItems: "center", gap: "8px" }}>
-            <User size={18} style={{ color: "#a855f7" }} /> Personal Information
-          </h2>
+        <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
           
-          <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            
-            <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "8px" }}>
-              <div style={{
-                width: "72px", height: "72px", borderRadius: "20px",
-                background: "linear-gradient(135deg,#6c47ff,#a855f7)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff", fontSize: "28px", fontWeight: 700,
-                boxShadow: "0 4px 14px rgba(108,71,255,0.3)"
-              }}>
-                {user?.name?.[0]?.toUpperCase() || "U"}
-              </div>
-              <div>
-                <button type="button" style={{
-                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-                  padding: "8px 16px", borderRadius: "10px", color: "#f1f1f5", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s"
+          {/* Avatar Preview */}
+          <div style={{ display: "flex", alignItems: "center", gap: "24px", paddingBottom: "24px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{
+              width: "100px", height: "100px", borderRadius: "24px",
+              background: formData.image ? `url(${formData.image}) center/cover` : "linear-gradient(135deg, #6c47ff, #a855f7)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "#fff", fontSize: "36px", fontWeight: 800,
+              boxShadow: "0 10px 25px rgba(108,71,255,0.3)",
+              border: "2px solid rgba(255,255,255,0.1)"
+            }}>
+              {!formData.image && (formData.name?.[0]?.toUpperCase() || user.name?.[0]?.toUpperCase() || "U")}
+            </div>
+            <div>
+              <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#f1f1f5", margin: "0 0 4px 0" }}>Profile Picture</h3>
+              <p style={{ fontSize: "14px", color: "#8b8ba8", margin: 0 }}>Provide an image URL below to update your avatar.</p>
+            </div>
+          </div>
+
+          {/* Form Fields */}
+          <div>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, color: "#a1a1aa", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Full Name</label>
+            <div style={{ position: "relative" }}>
+              <User size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#6c47ff" }} />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                style={{
+                  width: "100%", padding: "16px 16px 16px 48px",
+                  background: "rgba(9,9,15,0.8)", border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: "16px", color: "#f1f1f5", fontSize: "16px", outline: "none", boxSizing: "border-box", transition: "all 0.2s"
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-                >
-                  Change Avatar
-                </button>
-              </div>
+                onFocus={(e) => { e.currentTarget.style.borderColor = "#a855f7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(168,85,247,0.15)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
+              />
             </div>
+          </div>
 
-            <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#8b8ba8", marginBottom: "8px" }}>Full Name</label>
-              <div style={{ position: "relative" }}>
-                <User size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#5a5a74" }} />
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name || (user?.name || "")}
-                  onChange={handleChange}
-                  style={{
-                    width: "100%", padding: "12px 14px 12px 42px",
-                    background: "rgba(9,9,15,0.6)", border: "1px solid rgba(255,255,255,0.08)",
-                    borderRadius: "12px", color: "#f1f1f5", fontSize: "14px", outline: "none", boxSizing: "border-box", transition: "all 0.2s"
-                  }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.5)"}
-                  onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
-                />
-              </div>
+          <div>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, color: "#a1a1aa", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Profile Image URL</label>
+            <div style={{ position: "relative" }}>
+              <ImageIcon size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#6c47ff" }} />
+              <input
+                type="text"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="https://example.com/avatar.jpg"
+                style={{
+                  width: "100%", padding: "16px 16px 16px 48px",
+                  background: "rgba(9,9,15,0.8)", border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: "16px", color: "#f1f1f5", fontSize: "16px", outline: "none", boxSizing: "border-box", transition: "all 0.2s"
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "#a855f7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(168,85,247,0.15)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
+              />
             </div>
+          </div>
 
-            <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#8b8ba8", marginBottom: "8px" }}>Email Address</label>
-              <div style={{ position: "relative" }}>
-                <Mail size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#5a5a74" }} />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email || (user?.email || "")}
-                  disabled
-                  style={{
-                    width: "100%", padding: "12px 14px 12px 42px",
-                    background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
-                    borderRadius: "12px", color: "#8b8ba8", fontSize: "14px", outline: "none", boxSizing: "border-box", cursor: "not-allowed"
-                  }}
-                />
-              </div>
-              <p style={{ fontSize: "11px", color: "#5a5a74", marginTop: "6px" }}>Email address cannot be changed right now.</p>
+          <div>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, color: "#a1a1aa", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email Address</label>
+            <div style={{ position: "relative" }}>
+              <Mail size={18} style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#5a5a74" }} />
+              <input
+                type="email"
+                value={user.email}
+                disabled
+                style={{
+                  width: "100%", padding: "16px 16px 16px 48px",
+                  background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
+                  borderRadius: "16px", color: "#5a5a74", fontSize: "16px", outline: "none", boxSizing: "border-box", cursor: "not-allowed"
+                }}
+              />
             </div>
+            <p style={{ fontSize: "13px", color: "#5a5a74", marginTop: "8px" }}>Your email address is used for login and cannot be changed.</p>
+          </div>
 
+          <div style={{ marginTop: "12px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
             <button
               type="submit"
               disabled={loading}
               style={{
-                background: "linear-gradient(135deg, #6c47ff, #a855f7)", border: "none",
-                padding: "14px", borderRadius: "12px", color: "#fff", fontSize: "14px", fontWeight: 700,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "10px", transition: "all 0.2s"
+                background: "linear-gradient(135deg, #a855f7, #6c47ff)", border: "none",
+                padding: "16px 32px", borderRadius: "16px", color: "#fff", fontSize: "16px", fontWeight: 800,
+                display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "10px",
+                cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, transition: "all 0.2s",
+                boxShadow: "0 10px 25px rgba(108,71,255,0.3)"
               }}
+              onMouseEnter={e => { if(!loading) { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 15px 35px rgba(108,71,255,0.4)"; } }}
+              onMouseLeave={e => { if(!loading) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 10px 25px rgba(108,71,255,0.3)"; } }}
             >
-              {loading ? "Saving..." : <><Save size={16} /> Save Changes</>}
-            </button>
-          </form>
-        </div>
-
-        {/* Security & Preferences */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px", flex: 1 }}>
-          
-          <div style={{
-            background: "rgba(15,15,26,0.6)", border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "24px", padding: "28px", backdropFilter: "blur(10px)",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.2)"
-          }}>
-            <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#fff", margin: "0 0 20px 0", display: "flex", alignItems: "center", gap: "8px" }}>
-              <Shield size={16} style={{ color: "#10b981" }} /> Security
-            </h2>
-            <button style={{
-              width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-              padding: "12px", borderRadius: "12px", color: "#f1f1f5", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", transition: "all 0.2s"
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)" }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)" }}
-            >
-              <Lock size={16} style={{ color: "#8b8ba8" }} /> Change Password
+              {loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />} 
+              {loading ? "Saving Changes..." : "Save Changes"}
             </button>
           </div>
-
-          <div style={{
-            background: "rgba(15,15,26,0.6)", border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "24px", padding: "28px", backdropFilter: "blur(10px)",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.2)", flex: 1
-          }}>
-            <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#fff", margin: "0 0 20px 0", display: "flex", alignItems: "center", gap: "8px" }}>
-              <Bell size={16} style={{ color: "#eab308" }} /> Preferences
-            </h2>
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <label style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
-                <input type="checkbox" name="notifications" checked={formData.notifications} onChange={handleChange} style={{ width: "16px", height: "16px", accentColor: "#6c47ff" }} />
-                <span style={{ fontSize: "13px", color: "#d4d4e0", fontWeight: 500 }}>Email Notifications for Campaigns</span>
-              </label>
-              <label style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
-                <input type="checkbox" name="newsletter" checked={formData.newsletter} onChange={handleChange} style={{ width: "16px", height: "16px", accentColor: "#6c47ff" }} />
-                <span style={{ fontSize: "13px", color: "#d4d4e0", fontWeight: 500 }}>Subscribe to Newsletter</span>
-              </label>
-            </div>
-          </div>
           
-        </div>
+        </form>
       </div>
     </motion.div>
   );
