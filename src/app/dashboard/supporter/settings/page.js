@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { User, Mail, Lock, Bell, Shield, Save, UploadCloud } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import api from "@/lib/axios";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -58,14 +59,21 @@ export default function SettingsPage() {
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await api.patch("/api/users/me", {
+        name: formData.name,
+        image: imagePreview,
+      });
+      toast.success("Settings saved successfully! You may need to refresh to see the changes everywhere.");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to save settings");
+    } finally {
       setLoading(false);
-      toast.success("Settings saved successfully!");
-    }, 1000);
+    }
   };
 
   return (
