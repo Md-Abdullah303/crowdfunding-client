@@ -17,7 +17,14 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     if (!sessionId) { setStatus("error"); return; }
     api.get(`/api/stripe/verify-payment?session_id=${sessionId}`)
-      .then(res => { setData(res.data.data); setStatus("success"); })
+      .then(res => {
+        setData(res.data.data);
+        setStatus("success");
+        // Redirect to dashboard after 3s so session reloads with fresh credits
+        setTimeout(() => {
+          window.location.href = "/dashboard/supporter";
+        }, 3000);
+      })
       .catch(() => setStatus("error"));
   }, [sessionId]);
 

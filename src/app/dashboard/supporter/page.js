@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   TrendingUp, 
@@ -7,28 +8,81 @@ import {
   Target, 
   Calendar,
   ArrowUpRight,
-  Sparkles
+  Sparkles,
+  Loader2,
+  Coins
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
-
-// Dummy Data for Supporter
-const supporterStats = [
-  { label: "Total Contributed", value: "$1,250", icon: <TrendingUp size={20} />, color: "#10b981", bg: "rgba(16,185,129,0.1)" },
-  { label: "Campaigns Supported", value: "8", icon: <Heart size={20} />, color: "#f43f5e", bg: "rgba(244,63,94,0.1)" },
-  { label: "Active Goals", value: "3", icon: <Target size={20} />, color: "#a855f7", bg: "rgba(168,85,247,0.1)" },
-];
-
-const recentContributions = [
-  { id: 1, title: "Eco-friendly Tech Gadget", amount: "$150", date: "2 days ago", status: "Success", image: "https://images.unsplash.com/photo-1526406915894-7bcd65f60845?auto=format&fit=crop&q=80&w=100&h=100" },
-  { id: 2, title: "Indie Game Development", amount: "$50", date: "1 week ago", status: "In Progress", image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=100&h=100" },
-  { id: 3, title: "Community Garden Project", amount: "$25", date: "2 weeks ago", status: "Success", image: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&q=80&w=100&h=100" },
-];
+import api from "@/lib/axios";
 
 export default function SupporterDashboard() {
   const { data: session } = useSession();
   const user = session?.user;
+
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalContributed: 0,
+    totalContributions: 0,
+    availableCredits: 0
+  });
+  const [recentContributions, setRecentContributions] = useState([]);
+
+  useEffect(() => {
+    if (!user) return;
+    
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch live user data for available credits
+        const userRes = await api.get("/api/users/me");
+        const availableCredits = userRes.data.data?.credits || 0;
+
+        // Fetch recent contributions (get a good amount to calculate total)
+        // In a real production app, the backend should have a dedicated /stats endpoint.
+        const contRes = await api.get("/api/contributions/my-contributions?page=1&limit=100");
+        const contributions = contRes.data.data || [];
+        const totalContributions = contRes.data.total || 0;
+        
+        let totalContributed = 0;
+        contributions.forEach(c => {
+          if (c.status === "approved" || c.status === "pending") {
+             totalContributed += c.amount;
+          }
+        });
+
+        setStats({
+          totalContributed,
+          totalContributions,
+          availableCredits
+        });
+
+        // Only keep the latest 4 for the recent list
+        setRecentContributions(contributions.slice(0, 4));
+
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+        <Loader2 className="animate-spin" size={40} style={{ color: "#a855f7" }} />
+      </div>
+    );
+  }
+
+  const supporterStats = [
+    { label: "Available Credits", value: `${stats.availableCredits} cr`, icon: <Coins size={20} />, color: "#a855f7", bg: "rgba(168,85,247,0.1)" },
+    { label: "Total Contributed", value: `${stats.totalContributed} cr`, icon: <TrendingUp size={20} />, color: "#10b981", bg: "rgba(16,185,129,0.1)" },
+    { label: "Contributions Made", value: stats.totalContributions, icon: <Heart size={20} />, color: "#f43f5e", bg: "rgba(244,63,94,0.1)" },
+  ];
 
   return (
     <motion.div
@@ -96,41 +150,65 @@ export default function SupporterDashboard() {
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
             <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", margin: 0 }}>Recent Contributions</h3>
-            <Link href="/dashboard/supporter/contributions" style={{ fontSize: "13px", color: "#a855f7", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
-              View All <ArrowUpRight size={14} />
-            </Link>
+            {recentContributions.length > 0 && (
+              <Link href="/dashboard/supporter/contributions" style={{ fontSize: "13px", color: "#a855f7", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
+                View All <ArrowUpRight size={14} />
+              </Link>
+            )}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {recentContributions.map((item) => (
-              <div key={item.id} style={{
-                display: "flex", alignItems: "center", gap: "16px", padding: "16px",
-                background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
-                borderRadius: "16px", transition: "all 0.2s"
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)" }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)" }}
-              >
-                <div style={{ width: "50px", height: "50px", borderRadius: "12px", overflow: "hidden", flexShrink: 0 }}>
-                  <img src={item.image} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <h4 style={{ margin: "0 0 4px 0", fontSize: "15px", fontWeight: 600, color: "#f1f1f5", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.title}</h4>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "12px", color: "#8b8ba8", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <Calendar size={12} /> {item.date}
-                    </span>
-                    <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#5a5a74" }} />
-                    <span style={{ fontSize: "12px", color: item.status === "Success" ? "#10b981" : "#eab308", fontWeight: 600 }}>
-                      {item.status}
-                    </span>
+            {recentContributions.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "40px 0", color: "#8b8ba8" }}>
+                <Heart size={40} style={{ color: "#5a5a74", marginBottom: "12px", display: "inline-block" }} />
+                <p style={{ margin: 0 }}>You haven't made any contributions yet.</p>
+              </div>
+            ) : (
+              recentContributions.map((item) => (
+                <div key={item._id} style={{
+                  display: "flex", alignItems: "center", gap: "16px", padding: "16px",
+                  background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)",
+                  borderRadius: "16px", transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)" }}
+                >
+                  <div style={{ width: "50px", height: "50px", borderRadius: "12px", overflow: "hidden", flexShrink: 0, background: "rgba(255,255,255,0.05)" }}>
+                    {item.campaign?.coverImage ? (
+                      <img src={item.campaign.coverImage} alt={item.campaign.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#8b8ba8" }}>
+                        <Target size={20} />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <Link href={`/campaigns/${item.campaign?._id}`} style={{ textDecoration: "none" }}>
+                      <h4 style={{ margin: "0 0 4px 0", fontSize: "15px", fontWeight: 600, color: "#f1f1f5", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", cursor: "pointer" }}>
+                        {item.campaign?.title || "Unknown Campaign"}
+                      </h4>
+                    </Link>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "12px", color: "#8b8ba8", display: "flex", alignItems: "center", gap: "4px" }}>
+                        <Calendar size={12} /> {new Date(item.createdAt).toLocaleDateString()}
+                      </span>
+                      <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#5a5a74" }} />
+                      <span style={{ 
+                        fontSize: "12px", 
+                        color: item.status === "approved" ? "#10b981" : item.status === "pending" ? "#eab308" : "#ef4444", 
+                        fontWeight: 600,
+                        textTransform: "capitalize"
+                      }}>
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: "16px", fontWeight: 800, color: "#fff" }}>
+                    {item.amount} cr
                   </div>
                 </div>
-                <div style={{ fontSize: "16px", fontWeight: 700, color: "#fff" }}>
-                  {item.amount}
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -151,17 +229,19 @@ export default function SupporterDashboard() {
             <p style={{ color: "#d4d4e0", fontSize: "14px", lineHeight: 1.6, margin: "0 0 24px 0", position: "relative", zIndex: 1 }}>
               Have a brilliant idea? Upgrade your account to Creator and start your own crowdfunding campaign today.
             </p>
-            <button style={{
-              background: "#fff", color: "#13131f", border: "none",
-              padding: "12px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: 700,
-              cursor: "pointer", position: "relative", zIndex: 1,
-              boxShadow: "0 4px 14px rgba(255,255,255,0.2)", transition: "all 0.2s"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
-            >
-              Become a Creator
-            </button>
+            <Link href="/dashboard/supporter/settings" style={{ textDecoration: "none" }}>
+              <button style={{
+                background: "#fff", color: "#13131f", border: "none",
+                padding: "12px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: 700,
+                cursor: "pointer", position: "relative", zIndex: 1,
+                boxShadow: "0 4px 14px rgba(255,255,255,0.2)", transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+              onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
+              >
+                Become a Creator
+              </button>
+            </Link>
           </div>
 
           <div style={{
@@ -171,10 +251,12 @@ export default function SupporterDashboard() {
           }}>
             <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#fff", margin: "0 0 16px 0" }}>Your Impact</h3>
             <p style={{ color: "#8b8ba8", fontSize: "14px", lineHeight: 1.6, margin: "0 0 24px 0" }}>
-              Thanks to your contributions, 8 projects have reached their funding goals and are now in production.
+              Thanks to your contributions, you have helped fund {stats.totalContributions} great ideas.
             </p>
-            <div style={{ height: "160px", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center", color: "#5a5a74", fontSize: "13px" }}>
-              [ Impact Chart Placeholder ]
+            <div style={{ height: "160px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#5a5a74" }}>
+              <Target size={32} style={{ color: "#a855f7", opacity: 0.8 }} />
+              <div style={{ fontSize: "24px", fontWeight: 800, color: "#f1f1f5" }}>{stats.totalContributed} Credits</div>
+              <div style={{ fontSize: "13px" }}>Total Impact Generated</div>
             </div>
           </div>
         </div>

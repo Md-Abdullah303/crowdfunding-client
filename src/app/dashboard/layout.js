@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,10 +20,12 @@ import {
   PieChart,
   Users,
   Layers,
-  Shield
+  Shield,
+  Coins
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import api from "@/lib/axios";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -32,6 +34,17 @@ export default function DashboardLayout({ children }) {
   const router = useRouter();
   
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [liveCredits, setLiveCredits] = useState(null);
+
+  // Fetch fresh credit balance from DB on every mount/pathname change
+  useEffect(() => {
+    if (!user) return;
+    api.get("/api/users/me")
+      .then(r => setLiveCredits(r.data.data?.credits ?? null))
+      .catch(() => {}); // silent fail, fallback to session
+  }, [user, pathname]);
+
+  const displayCredits = liveCredits ?? user?.credits ?? 0;
 
   const role = user?.role || "supporter";
 
@@ -122,6 +135,11 @@ export default function DashboardLayout({ children }) {
                 {user?.role || "Supporter"}
               </p>
             </div>
+          </div>
+          {/* Live Credit Balance */}
+          <div style={{ marginTop: "14px", padding: "10px 14px", background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.15)", borderRadius: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+            <Coins size={14} style={{ color: "#a855f7", flexShrink: 0 }} />
+            <span style={{ fontSize: "13px", color: "#d4d4e0", fontWeight: 700 }}>{displayCredits} Credits</span>
           </div>
         </div>
 
