@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Clock, Target, Coins, Loader2, ArrowLeft, Heart, Share2, CalendarDays } from "lucide-react";
+import { Clock, Target, Coins, Loader2, ArrowLeft, Heart, Share2, CalendarDays, X, Minus, Plus } from "lucide-react";
 import api from "@/lib/axios";
+import { useSession } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 const CATEGORY_COLORS = {
   environment: { bg: "rgba(34,197,94,0.15)", text: "#22c55e", border: "rgba(34,197,94,0.3)" },
@@ -22,31 +24,134 @@ function getDaysLeft(deadline) {
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
 
+// Contribution Modal
+function ContributeModal({ campaign, userCredits, onClose, onSuccess }) {
+  const [amount, setAmount] = useState(10);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const presets = [5, 10, 25, 50, 100];
+
+  const handleSubmit = async () => {
+    if (amount < 1) { toast.error("Minimum contribution is 1 credit"); return; }
+    if (amount > userCredits) { toast.error(`Insufficient credits. You have ${userCredits} credits.`); return; }
+    setLoading(true);
+    try {
+      await api.post("/api/contributions", { campaignId: campaign._id, amount, message });
+      toast.success(`🎉 Successfully contributed ${amount} credits!`);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Contribution failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}
+      onClick={onClose}
+    >
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: "spring", damping: 22 }}
+        onClick={e => e.stopPropagation()}
+        style={{ background: "rgba(19,19,31,0.98)", border: "1px solid rgba(168,85,247,0.2)", borderRadius: "28px", padding: "36px", width: "100%", maxWidth: "480px", boxShadow: "0 30px 70px rgba(0,0,0,0.6)" }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+          <div>
+            <h2 style={{ fontSize: "22px", fontWeight: 900, color: "#f1f1f5", margin: "0 0 4px 0" }}>Back this Campaign</h2>
+            <p style={{ fontSize: "13px", color: "#8b8ba8", margin: 0 }}>{campaign.title}</p>
+          </div>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#8b8ba8", cursor: "pointer", padding: "8px", borderRadius: "10px", display: "flex" }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Balance Banner */}
+        <div style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "14px", padding: "14px 18px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ color: "#8b8ba8", fontSize: "14px", fontWeight: 600 }}>Your Balance</span>
+          <span style={{ color: "#10b981", fontSize: "18px", fontWeight: 800 }}>{userCredits} Credits</span>
+        </div>
+
+        {/* Preset Amounts */}
+        <p style={{ fontSize: "13px", fontWeight: 700, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" }}>Quick Select</p>
+        <div style={{ display: "flex", gap: "8px", marginBottom: "20px", flexWrap: "wrap" }}>
+          {presets.map(p => (
+            <button key={p} onClick={() => setAmount(p)}
+              style={{ padding: "8px 16px", borderRadius: "10px", border: amount === p ? "1px solid #a855f7" : "1px solid rgba(255,255,255,0.08)", background: amount === p ? "rgba(168,85,247,0.15)" : "rgba(255,255,255,0.03)", color: amount === p ? "#a855f7" : "#d4d4e0", fontWeight: 700, cursor: "pointer", transition: "all 0.2s", fontSize: "14px" }}>
+              {p}
+            </button>
+          ))}
+        </div>
+
+        {/* Amount Input */}
+        <p style={{ fontSize: "13px", fontWeight: 700, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" }}>Custom Amount</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+          <button onClick={() => setAmount(a => Math.max(1, a - 1))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#f1f1f5", cursor: "pointer", padding: "12px", borderRadius: "12px", display: "flex" }}>
+            <Minus size={18} />
+          </button>
+          <input type="number" value={amount} min={1} max={userCredits}
+            onChange={e => setAmount(Math.max(1, Math.min(userCredits, parseInt(e.target.value) || 1)))}
+            style={{ flex: 1, textAlign: "center", padding: "14px", background: "rgba(9,9,15,0.8)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", color: "#f1f1f5", fontSize: "20px", fontWeight: 800, outline: "none" }}
+            onFocus={e => { e.currentTarget.style.borderColor = "#a855f7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(168,85,247,0.15)"; }}
+            onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
+          />
+          <button onClick={() => setAmount(a => Math.min(userCredits, a + 1))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#f1f1f5", cursor: "pointer", padding: "12px", borderRadius: "12px", display: "flex" }}>
+            <Plus size={18} />
+          </button>
+        </div>
+
+        {/* Message */}
+        <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Leave an optional message for the creator..." rows={3}
+          style={{ width: "100%", padding: "14px 16px", background: "rgba(9,9,15,0.8)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", color: "#f1f1f5", fontSize: "14px", outline: "none", resize: "none", boxSizing: "border-box", fontFamily: "inherit", marginBottom: "24px" }}
+          onFocus={e => { e.currentTarget.style.borderColor = "#a855f7"; }}
+          onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+        />
+
+        <button onClick={handleSubmit} disabled={loading || amount < 1 || amount > userCredits}
+          style={{ width: "100%", padding: "16px", borderRadius: "16px", background: loading || amount > userCredits ? "rgba(108,71,255,0.4)" : "linear-gradient(135deg, #a855f7, #6c47ff)", color: "#fff", fontSize: "16px", fontWeight: 800, border: "none", cursor: loading || amount > userCredits ? "not-allowed" : "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", boxShadow: "0 10px 25px rgba(108,71,255,0.3)" }}
+        >
+          {loading ? <Loader2 size={20} className="animate-spin" /> : <Heart size={20} />}
+          {loading ? "Processing..." : `Contribute ${amount} Credits`}
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function CampaignDetailsPage() {
   const { id } = useParams();
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const fetchCampaign = async () => {
+    try {
+      const response = await api.get(`/api/campaigns/${id}`);
+      if (response.data.success) {
+        setCampaign(response.data.data);
+      } else {
+        setError(response.data.message || "Failed to fetch campaign details");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCampaign = async () => {
-      try {
-        const response = await api.get(`/api/campaigns/${id}`);
-        if (response.data.success) {
-          setCampaign(response.data.data);
-        } else {
-          setError(response.data.message || "Failed to fetch campaign details");
-        }
-      } catch (err) {
-        setError(err.response?.data?.message || err.message || "Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) {
-      fetchCampaign();
-    }
+    if (id) fetchCampaign();
   }, [id]);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard!");
+  };
 
   if (loading) {
     return (
@@ -73,6 +178,8 @@ export default function CampaignDetailsPage() {
   const progress = Math.min(100, Math.round((campaign.raisedAmount / campaign.goalAmount) * 100));
   const daysLeft = getDaysLeft(campaign.deadline);
   const cat = CATEGORY_COLORS[campaign.category] || CATEGORY_COLORS.other;
+  const isSupporter = user?.role === "supporter";
+  const canContribute = isSupporter && daysLeft > 0;
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden", paddingBottom: "100px" }}>
@@ -88,7 +195,7 @@ export default function CampaignDetailsPage() {
           Back to Explore
         </Link>
 
-        <div style={{ display: "flex", flexDirection: "column", lg: { flexDirection: "row" }, gap: "40px" }} className="lg:flex-row">
+        <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
           
           {/* Left Column: Image & Details */}
           <div style={{ flex: "1 1 60%" }}>
@@ -130,7 +237,7 @@ export default function CampaignDetailsPage() {
           </div>
 
           {/* Right Column: Funding Box */}
-          <div style={{ flex: "1 1 40%", maxWidth: "450px" }} className="lg:max-w-[450px]">
+          <div style={{ flex: "1 1 40%", maxWidth: "450px" }}>
             <div style={{ position: "sticky", top: "100px", background: "rgba(19,19,31,0.6)", backdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid rgba(255,255,255,0.06)", padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" }}>
               
               {/* Progress */}
@@ -143,12 +250,13 @@ export default function CampaignDetailsPage() {
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontSize: "36px", fontWeight: 900, color: "#10b981", lineHeight: 1 }}>
-                    ${campaign.raisedAmount?.toLocaleString() || 0}
+                    {campaign.raisedAmount?.toLocaleString() || 0} credits
                   </span>
                   <span style={{ fontSize: "14px", color: "#8b8ba8", fontWeight: 600 }}>
-                    raised of <span style={{ color: "#f1f1f5" }}>${campaign.goalAmount?.toLocaleString() || 0}</span>
+                    of <span style={{ color: "#f1f1f5" }}>{campaign.goalAmount?.toLocaleString() || 0}</span>
                   </span>
                 </div>
+                <div style={{ marginTop: "8px", fontSize: "12px", fontWeight: 800, color: "#a855f7", textTransform: "uppercase", letterSpacing: "0.06em" }}>{progress}% Funded</div>
               </div>
 
               {/* Stats Grid */}
@@ -158,7 +266,7 @@ export default function CampaignDetailsPage() {
                     <Target size={18} />
                     <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>Goal</span>
                   </div>
-                  <div style={{ fontSize: "20px", fontWeight: 800, color: "#f1f1f5" }}>${campaign.goalAmount?.toLocaleString() || 0}</div>
+                  <div style={{ fontSize: "20px", fontWeight: 800, color: "#f1f1f5" }}>{campaign.goalAmount?.toLocaleString() || 0} cr</div>
                 </div>
 
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.03)" }}>
@@ -176,21 +284,44 @@ export default function CampaignDetailsPage() {
               </div>
 
               {/* Action Buttons */}
-              <button style={{ width: "100%", padding: "16px", borderRadius: "16px", background: "linear-gradient(135deg, #a855f7, #6c47ff)", color: "#fff", fontSize: "18px", fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", boxShadow: "0 10px 25px rgba(108,71,255,0.3)", transition: "transform 0.2s, box-shadow 0.2s", marginBottom: "16px" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 15px 35px rgba(108,71,255,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 10px 25px rgba(108,71,255,0.3)"; }}>
-                <Heart size={20} />
-                Contribute Now
-              </button>
+              {canContribute ? (
+                <button onClick={() => setShowModal(true)} style={{ width: "100%", padding: "16px", borderRadius: "16px", background: "linear-gradient(135deg, #a855f7, #6c47ff)", color: "#fff", fontSize: "18px", fontWeight: 800, border: "none", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", boxShadow: "0 10px 25px rgba(108,71,255,0.3)", transition: "transform 0.2s, box-shadow 0.2s", marginBottom: "16px" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 15px 35px rgba(108,71,255,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 10px 25px rgba(108,71,255,0.3)"; }}>
+                  <Heart size={20} />
+                  Contribute Now
+                </button>
+              ) : !user ? (
+                <Link href="/login" style={{ display: "block", textDecoration: "none", marginBottom: "16px" }}>
+                  <div style={{ width: "100%", padding: "16px", borderRadius: "16px", background: "linear-gradient(135deg, #a855f7, #6c47ff)", color: "#fff", fontSize: "18px", fontWeight: 800, textAlign: "center", boxShadow: "0 10px 25px rgba(108,71,255,0.3)" }}>
+                    Login to Contribute
+                  </div>
+                </Link>
+              ) : (
+                <div style={{ padding: "14px", background: "rgba(255,255,255,0.03)", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", color: "#8b8ba8", textAlign: "center", fontSize: "14px", marginBottom: "16px" }}>
+                  {daysLeft === 0 ? "⏰ This campaign has ended." : "Only Supporters can contribute to campaigns."}
+                </div>
+              )}
 
-              <button style={{ width: "100%", padding: "14px", borderRadius: "16px", background: "rgba(255,255,255,0.05)", color: "#f1f1f5", fontSize: "16px", fontWeight: 700, border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.1)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}>
+              <button onClick={handleShare} style={{ width: "100%", padding: "14px", borderRadius: "16px", background: "rgba(255,255,255,0.05)", color: "#f1f1f5", fontSize: "16px", fontWeight: 700, border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.1)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}>
                 <Share2 size={18} />
                 Share Campaign
               </button>
-
             </div>
           </div>
           
         </div>
       </div>
+
+      {/* Contribute Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <ContributeModal
+            campaign={campaign}
+            userCredits={user?.credits || 0}
+            onClose={() => setShowModal(false)}
+            onSuccess={fetchCampaign}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

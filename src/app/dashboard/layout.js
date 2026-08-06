@@ -39,19 +39,19 @@ export default function DashboardLayout({ children }) {
     { name: "Overview", href: "/dashboard/admin", icon: <LayoutDashboard size={18} /> },
     { name: "User Management", href: "/dashboard/admin/users", icon: <Users size={18} /> },
     { name: "All Campaigns", href: "/dashboard/admin/all-campaigns", icon: <Layers size={18} /> },
-    { name: "Platform Settings", href: "/dashboard/admin/platform-settings", icon: <Shield size={18} /> },
+    { name: "Withdrawals", href: "/dashboard/admin/wallet", icon: <Wallet size={18} /> },
     { name: "Account Settings", href: "/dashboard/admin/settings", icon: <Settings size={18} /> },
   ] : role === "creator" ? [
     { name: "Overview", href: "/dashboard/creator", icon: <LayoutDashboard size={18} /> },
     { name: "My Campaigns", href: "/dashboard/creator/my-campaigns", icon: <FolderKanban size={18} /> },
-    { name: "Earnings", href: "/dashboard/creator/earnings", icon: <PieChart size={18} /> },
-    { name: "Wallet & Credits", href: "/dashboard/creator/wallet", icon: <Wallet size={18} /> },
+    { name: "Contributions", href: "/dashboard/creator/earnings", icon: <PieChart size={18} /> },
+    { name: "Withdraw Funds", href: "/dashboard/creator/wallet", icon: <Wallet size={18} /> },
     { name: "Account Settings", href: "/dashboard/creator/settings", icon: <Settings size={18} /> },
   ] : [
     { name: "Overview", href: "/dashboard/supporter", icon: <LayoutDashboard size={18} /> },
     { name: "My Contributions", href: "/dashboard/supporter/contributions", icon: <Heart size={18} /> },
-    { name: "Transaction History", href: "/dashboard/supporter/history", icon: <History size={18} /> },
-    { name: "Wallet & Credits", href: "/dashboard/supporter/wallet", icon: <Wallet size={18} /> },
+    { name: "Payment History", href: "/dashboard/supporter/history", icon: <History size={18} /> },
+    { name: "Buy Credits", href: "/dashboard/supporter/wallet", icon: <Wallet size={18} /> },
     { name: "Account Settings", href: "/dashboard/supporter/settings", icon: <Settings size={18} /> },
   ];
 
