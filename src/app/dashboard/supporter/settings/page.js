@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Lock, Bell, Shield, Save } from "lucide-react";
+import { User, Mail, Lock, Bell, Shield, Save, UploadCloud } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 
@@ -17,6 +17,38 @@ export default function SettingsPage() {
     notifications: true,
     newsletter: false,
   });
+
+  const [dragActive, setDragActive] = useState(false);
+  const [imagePreview, setImagePreview] = useState(user?.image || null);
+  const fileInputRef = useRef(null);
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    else if (e.type === "dragleave") setDragActive(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0]);
+    }
+  };
+
+  const handleFile = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => setImagePreview(e.target.result);
+    reader.readAsDataURL(file);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -61,26 +93,46 @@ export default function SettingsPage() {
           
           <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             
-            <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "8px" }}>
-              <div style={{
-                width: "72px", height: "72px", borderRadius: "20px",
-                background: "linear-gradient(135deg,#6c47ff,#a855f7)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff", fontSize: "28px", fontWeight: 700,
-                boxShadow: "0 4px 14px rgba(108,71,255,0.3)"
-              }}>
-                {user?.name?.[0]?.toUpperCase() || "U"}
-              </div>
-              <div>
-                <button type="button" style={{
-                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-                  padding: "8px 16px", borderRadius: "10px", color: "#f1f1f5", fontSize: "13px", fontWeight: 600, cursor: "pointer", transition: "all 0.2s"
+            <div style={{ marginBottom: "20px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#8b8ba8", marginBottom: "8px" }}>Profile Picture</label>
+              <div 
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                style={{ 
+                  display: "flex", alignItems: "center", gap: "20px", padding: "20px", 
+                  border: `2px dashed ${dragActive ? "#a855f7" : "rgba(255,255,255,0.1)"}`, 
+                  borderRadius: "16px", background: dragActive ? "rgba(168,85,247,0.05)" : "rgba(255,255,255,0.02)",
+                  cursor: "pointer", transition: "all 0.2s" 
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-                >
-                  Change Avatar
-                </button>
+              >
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                  accept="image/*" 
+                  style={{ display: "none" }} 
+                />
+                
+                <div style={{
+                  width: "72px", height: "72px", borderRadius: "20px",
+                  background: imagePreview ? `url(${imagePreview}) center/cover` : "linear-gradient(135deg,#6c47ff,#a855f7)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#fff", fontSize: "28px", fontWeight: 700,
+                  boxShadow: "0 4px 14px rgba(108,71,255,0.3)",
+                  flexShrink: 0
+                }}>
+                  {!imagePreview && (user?.name?.[0]?.toUpperCase() || "U")}
+                </div>
+                
+                <div>
+                  <div style={{ color: "#f1f1f5", fontSize: "14px", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                    <UploadCloud size={16} style={{ color: "#a855f7" }} /> Click or drag image here
+                  </div>
+                  <div style={{ color: "#5a5a74", fontSize: "12px" }}>PNG, JPG or GIF up to 5MB</div>
+                </div>
               </div>
             </div>
 
