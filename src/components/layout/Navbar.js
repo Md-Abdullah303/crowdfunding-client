@@ -60,38 +60,44 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[#09090f]/95 backdrop-blur-xl border-b border-white/5 shadow-2xl"
-            : "bg-gradient-to-b from-[#09090f]/80 to-transparent"
-        }`}
+        style={{
+          position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
+          transition: "all 0.3s ease",
+          background: scrolled ? "rgba(9, 9, 15, 0.95)" : "transparent",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.05)" : "none",
+          boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.3)" : "none"
+        }}
       >
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between h-[72px] gap-4">
+        <div className="container" style={{ margin: "0 auto", padding: "0 24px", maxWidth: "1280px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "76px", gap: "20px" }}>
             
             {/* ── Logo ────────────────────────────────────────────────────────── */}
-            <Link href="/" className="flex items-center gap-3 shrink-0 group">
-              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(108,71,255,0.4)] group-hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all duration-300">
-                <Image src="/logo.png" alt="FundFlow logo" fill className="object-cover" />
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none", flexShrink: 0 }}>
+              <div style={{ width: "40px", height: "40px", borderRadius: "12px", overflow: "hidden", position: "relative", boxShadow: "0 0 20px rgba(108,71,255,0.4)" }}>
+                <Image src="/logo.png" alt="FundFlow logo" fill style={{ objectFit: "cover" }} />
               </div>
-              <span className="text-xl font-black tracking-tight bg-gradient-to-br from-[#6c47ff] to-[#a855f7] bg-clip-text text-transparent">
+              <span style={{ fontSize: "20px", fontWeight: "900", letterSpacing: "-0.5px", background: "linear-gradient(135deg, #6c47ff, #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 FundFlow
               </span>
             </Link>
 
             {/* ── Desktop Nav ──────────────────────────────────────────────────── */}
-            <nav className="hidden xl:flex items-center gap-1">
+            <nav className="hidden xl:flex" style={{ display: "none", alignItems: "center", gap: "8px" }} id="desktop-nav">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
-                      active
-                        ? "text-[#a855f7] bg-[#a855f7]/10"
-                        : "text-[#8b8ba8] hover:text-[#f1f1f5] hover:bg-white/5"
-                    }`}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "8px", padding: "10px 16px", borderRadius: "12px",
+                      fontSize: "15px", fontWeight: "600", textDecoration: "none", transition: "all 0.2s ease",
+                      color: active ? "#a855f7" : "#8b8ba8",
+                      backgroundColor: active ? "rgba(168,85,247,0.1)" : "transparent",
+                    }}
+                    onMouseOver={(e) => { if(!active) { e.currentTarget.style.color = "#fff"; e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; } }}
+                    onMouseOut={(e) => { if(!active) { e.currentTarget.style.color = "#8b8ba8"; e.currentTarget.style.backgroundColor = "transparent"; } }}
                   >
                     {link.icon}
                     {link.label}
@@ -101,52 +107,55 @@ export default function Navbar() {
             </nav>
 
             {/* ── Desktop Auth Area ────────────────────────────────────────────── */}
-            <div className="hidden xl:flex items-center gap-4 shrink-0">
+            <div className="hidden xl:flex" style={{ display: "none", alignItems: "center", gap: "16px", flexShrink: 0 }} id="desktop-auth">
               <a
                 href="https://github.com/Md-Abdullah303/crowdfunding-client"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-[#a855f7] bg-[#a855f7]/10 border border-[#a855f7]/30 hover:bg-[#a855f7]/20 transition-all duration-200 whitespace-nowrap"
+                style={{
+                  padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: "700", color: "#a855f7",
+                  backgroundColor: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.3)", textDecoration: "none",
+                  transition: "all 0.2s ease", whiteSpace: "nowrap"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(168,85,247,0.2)"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(168,85,247,0.1)"}
               >
                 Join as Developer
               </a>
 
               {isPending ? (
-                <div className="w-32 h-10 bg-white/5 animate-pulse rounded-xl" />
+                <div style={{ width: "120px", height: "40px", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "12px" }} />
               ) : user ? (
-                <div className="flex items-center gap-3">
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                   <NotificationBell />
 
-                  <div className="relative">
+                  <div style={{ position: "relative" }}>
                     <button
                       onClick={() => setDropdownOpen(!dropdownOpen)}
-                      className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 bg-[#13131f]/80 hover:border-[#6c47ff]/50 transition-all whitespace-nowrap"
+                      style={{
+                        display: "flex", alignItems: "center", gap: "12px", padding: "6px 14px 6px 6px", borderRadius: "12px",
+                        border: "1px solid rgba(255,255,255,0.1)", backgroundColor: "rgba(19,19,31,0.8)", cursor: "pointer",
+                        transition: "border-color 0.2s ease"
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.5)"}
+                      onMouseOut={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"}
                     >
                       {user.image ? (
-                        <img
-                          src={user.image}
-                          alt="Profile"
-                          className="w-8 h-8 rounded-lg object-cover"
-                        />
+                        <img src={user.image} alt="Profile" style={{ width: "32px", height: "32px", borderRadius: "8px", objectFit: "cover" }} />
                       ) : (
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6c47ff] to-[#a855f7] flex items-center justify-center text-white font-bold text-sm">
+                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "linear-gradient(135deg, #6c47ff, #a855f7)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: "bold", fontSize: "14px" }}>
                           {user.name?.[0]?.toUpperCase()}
                         </div>
                       )}
-                      <div className="flex flex-col items-start">
-                        <span className="text-sm font-bold text-[#f1f1f5] leading-tight">
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                        <span style={{ fontSize: "14px", fontWeight: "700", color: "#f1f1f5", lineHeight: "1.1" }}>
                           {user.name?.split(" ")[0]}
                         </span>
-                        <span className="text-[10px] font-bold text-[#a855f7] uppercase tracking-wider">
-                          {user.role}
+                        <span style={{ fontSize: "10px", fontWeight: "700", color: "#a855f7", textTransform: "uppercase", letterSpacing: "1px" }}>
+                          {user.role || "SUPPORTER"}
                         </span>
                       </div>
-                      <ChevronDown
-                        size={14}
-                        className={`text-[#8b8ba8] transition-transform duration-200 ${
-                          dropdownOpen ? "rotate-180" : ""
-                        }`}
-                      />
+                      <ChevronDown size={14} style={{ color: "#8b8ba8", marginLeft: "4px", transform: dropdownOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s ease" }} />
                     </button>
 
                     <AnimatePresence>
@@ -156,26 +165,22 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute right-0 top-full mt-2 w-56 bg-[#13131f] border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden"
+                          style={{
+                            position: "absolute", right: 0, top: "calc(100% + 8px)", width: "220px",
+                            backgroundColor: "#13131f", border: "1px solid rgba(255,255,255,0.1)",
+                            borderRadius: "16px", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", overflow: "hidden"
+                          }}
                         >
-                          <div className="p-4 border-b border-white/5 bg-white/[0.02]">
-                            <div className="text-sm font-bold text-white truncate">{user.name}</div>
-                            <div className="text-xs text-[#8b8ba8] truncate">{user.email}</div>
+                          <div style={{ padding: "16px", borderBottom: "1px solid rgba(255,255,255,0.05)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                            <div style={{ fontSize: "14px", fontWeight: "700", color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</div>
+                            <div style={{ fontSize: "12px", color: "#8b8ba8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginTop: "2px" }}>{user.email}</div>
                           </div>
-                          <div className="p-2 flex flex-col gap-1">
-                            <Link
-                              href="/dashboard"
-                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#d4d4e0] hover:text-white hover:bg-white/5 transition-all"
-                            >
-                              <LayoutDashboard size={16} className="text-[#a855f7]" />
-                              Dashboard
+                          <div style={{ padding: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "12px", fontSize: "14px", fontWeight: "600", color: "#d4d4e0", textDecoration: "none", transition: "all 0.2s ease" }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#fff"; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#d4d4e0"; }}>
+                              <LayoutDashboard size={16} color="#a855f7" /> Dashboard
                             </Link>
-                            <button
-                              onClick={handleSignOut}
-                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#ef4444] hover:bg-[#ef4444]/10 transition-all w-full text-left"
-                            >
-                              <LogOut size={16} />
-                              Sign Out
+                            <button onClick={handleSignOut} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "12px", fontSize: "14px", fontWeight: "600", color: "#ef4444", background: "none", border: "none", cursor: "pointer", width: "100%", textAlign: "left", transition: "all 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.1)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
+                              <LogOut size={16} /> Sign Out
                             </button>
                           </div>
                         </motion.div>
@@ -184,36 +189,41 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 shrink-0">
-                  <Link
-                    href="/login"
-                    className="px-5 py-2 rounded-xl text-sm font-bold text-[#d4d4e0] hover:text-white hover:bg-white/5 transition-all whitespace-nowrap"
-                  >
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+                  <Link href="/login" style={{ padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: "700", color: "#d4d4e0", textDecoration: "none", transition: "all 0.2s ease" }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#fff"; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#d4d4e0"; }}>
                     Log In
                   </Link>
-                  <Link
-                    href="/register"
-                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all whitespace-nowrap"
-                  >
-                    <UserPlus size={16} />
-                    Get Started
+                  <Link href="/register" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: "700", color: "#fff", background: "linear-gradient(135deg, #6c47ff, #a855f7)", textDecoration: "none", transition: "all 0.2s ease", boxShadow: "0 4px 15px rgba(108,71,255,0.3)" }} onMouseOver={(e) => e.currentTarget.style.boxShadow = "0 6px 20px rgba(108,71,255,0.5)"} onMouseOut={(e) => e.currentTarget.style.boxShadow = "0 4px 15px rgba(108,71,255,0.3)"}>
+                    <UserPlus size={16} /> Get Started
                   </Link>
                 </div>
               )}
             </div>
 
             {/* ── Mobile Hamburger & Icons ──────────────────────────────────────── */}
-            <div className="flex xl:hidden items-center gap-3 shrink-0">
+            <div className="flex xl:hidden" style={{ alignItems: "center", gap: "16px", flexShrink: 0 }} id="mobile-toggle">
               {user && <NotificationBell />}
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="p-2 rounded-xl bg-white/5 text-[#d4d4e0] hover:bg-white/10 transition-colors"
-              >
+              <button onClick={() => setMobileOpen(!mobileOpen)} style={{ padding: "8px", borderRadius: "12px", backgroundColor: "rgba(255,255,255,0.05)", color: "#d4d4e0", border: "none", cursor: "pointer", transition: "all 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"}>
                 {mobileOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
+            
           </div>
         </div>
+
+        {/* CSS for Media Queries to handle hidden classes safely */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @media (min-width: 1280px) {
+            #mobile-toggle { display: none !important; }
+            #desktop-nav { display: flex !important; }
+            #desktop-auth { display: flex !important; }
+          }
+          @media (max-width: 1279px) {
+            #mobile-toggle { display: flex !important; }
+            #desktop-nav { display: none !important; }
+            #desktop-auth { display: none !important; }
+          }
+        `}} />
 
         {/* ── Mobile Menu ──────────────────────────────────────────────────────── */}
         <AnimatePresence>
@@ -223,66 +233,37 @@ export default function Navbar() {
               animate={{ opacity: 1, height: "auto", y: 0 }}
               exit={{ opacity: 0, height: 0, y: -10 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="xl:hidden border-t border-white/5 bg-[#09090f]/95 backdrop-blur-3xl overflow-hidden shadow-2xl"
+              style={{ overflow: "hidden", backgroundColor: "rgba(9, 9, 15, 0.98)", backdropFilter: "blur(30px)", borderTop: "1px solid rgba(255,255,255,0.05)", boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}
             >
-              <div className="container mx-auto px-4 py-6 flex flex-col gap-3">
+              <div style={{ padding: "24px 20px", display: "flex", flexDirection: "column", gap: "12px" }}>
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-semibold text-[#8b8ba8] hover:bg-white/5 hover:text-white transition-all group"
-                  >
-                    <span className="text-[#a855f7] opacity-70 group-hover:opacity-100 transition-opacity">
-                      {link.icon}
-                    </span>
-                    {link.label}
+                  <Link key={link.href} href={link.href} style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px 24px", borderRadius: "16px", fontSize: "16px", fontWeight: "600", color: "#d4d4e0", textDecoration: "none", transition: "all 0.2s ease" }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#fff"; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#d4d4e0"; }}>
+                    <span style={{ color: "#a855f7" }}>{link.icon}</span> {link.label}
                   </Link>
                 ))}
                 
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-2" />
+                <div style={{ width: "100%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)", margin: "8px 0" }} />
                 
-                <a
-                  href="https://github.com/Md-Abdullah303/crowdfunding-client"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-bold text-[#a855f7] bg-[#a855f7]/5 border border-[#a855f7]/20 hover:bg-[#a855f7]/10 transition-all"
-                >
+                <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px 24px", borderRadius: "16px", fontSize: "16px", fontWeight: "700", color: "#a855f7", backgroundColor: "rgba(168,85,247,0.05)", border: "1px solid rgba(168,85,247,0.2)", textDecoration: "none", transition: "all 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(168,85,247,0.1)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(168,85,247,0.05)"}>
                   Join as Developer
                 </a>
 
                 {user ? (
                   <>
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-bold text-white bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all"
-                    >
-                      <span className="text-[#6c47ff]">
-                        <LayoutDashboard size={18} />
-                      </span>
-                      Dashboard
+                    <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px 24px", borderRadius: "16px", fontSize: "16px", fontWeight: "700", color: "#fff", backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", textDecoration: "none", transition: "all 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"}>
+                      <span style={{ color: "#6c47ff" }}><LayoutDashboard size={18} /></span> Dashboard
                     </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-bold text-[#ef4444] bg-[#ef4444]/5 border border-[#ef4444]/10 hover:bg-[#ef4444]/10 transition-all text-left w-full"
-                    >
-                      <LogOut size={18} />
-                      Sign Out
+                    <button onClick={handleSignOut} style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px 24px", borderRadius: "16px", fontSize: "16px", fontWeight: "700", color: "#ef4444", backgroundColor: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.1)", cursor: "pointer", width: "100%", textAlign: "left", transition: "all 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.1)"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.05)"}>
+                      <LogOut size={18} /> Sign Out
                     </button>
                   </>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4 mt-3">
-                    <Link
-                      href="/login"
-                      className="flex items-center justify-center py-4 rounded-2xl text-[16px] font-bold text-[#d4d4e0] bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all"
-                    >
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "12px" }}>
+                    <Link href="/login" style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", borderRadius: "16px", fontSize: "16px", fontWeight: "700", color: "#d4d4e0", backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", textDecoration: "none", transition: "all 0.2s ease" }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#fff"; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#d4d4e0"; }}>
                       Log In
                     </Link>
-                    <Link
-                      href="/register"
-                      className="flex items-center justify-center gap-2 py-4 rounded-2xl text-[16px] font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_8px_25px_-8px_rgba(168,85,247,0.5)]"
-                    >
-                      <UserPlus size={18} />
-                      Register
+                    <Link href="/register" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "16px", borderRadius: "16px", fontSize: "16px", fontWeight: "700", color: "#fff", background: "linear-gradient(135deg, #6c47ff, #a855f7)", boxShadow: "0 8px 25px -8px rgba(168,85,247,0.5)", textDecoration: "none", transition: "all 0.2s ease" }}>
+                      <UserPlus size={18} /> Register
                     </Link>
                   </div>
                 )}
@@ -293,7 +274,7 @@ export default function Navbar() {
       </header>
 
       {/* Spacer */}
-      <div className="h-[72px]" />
+      <div style={{ height: "76px" }} />
     </>
   );
 }
