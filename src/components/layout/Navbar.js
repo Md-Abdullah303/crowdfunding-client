@@ -105,7 +105,7 @@ export default function Navbar() {
             </Link>
 
             {/* ── Desktop Nav ──────────────────────────────────────────────────── */}
-            <nav style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden lg:flex">
+            <nav style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden xl:flex">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
@@ -143,7 +143,7 @@ export default function Navbar() {
             </nav>
 
             {/* ── Auth Area ────────────────────────────────────────────────────── */}
-            <div className="hidden lg:flex" style={{ alignItems: "center", gap: "10px" }}>
+            <div className="hidden xl:flex" style={{ alignItems: "center", gap: "10px" }}>
               <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" 
                 style={{
                   display: "flex", alignItems: "center", gap: "6px",
@@ -263,7 +263,7 @@ export default function Navbar() {
             </div>
 
             {/* ── Mobile Hamburger & Icons ──────────────────────────────────────── */}
-            <div className="flex lg:hidden items-center gap-4">
+            <div className="flex xl:hidden items-center gap-4">
               {user && <NotificationBell />}
               <button
                 onClick={() => setMobileOpen((v) => !v)}
