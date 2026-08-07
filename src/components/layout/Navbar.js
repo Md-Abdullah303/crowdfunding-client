@@ -105,7 +105,7 @@ export default function Navbar() {
             </Link>
 
             {/* ── Desktop Nav ──────────────────────────────────────────────────── */}
-            <nav style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden md:flex">
+            <nav style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden lg:flex">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
@@ -142,7 +142,7 @@ export default function Navbar() {
             </nav>
 
             {/* ── Auth Area ────────────────────────────────────────────────────── */}
-            <div className="hidden md:flex" style={{ alignItems: "center", gap: "10px" }}>
+            <div className="hidden lg:flex" style={{ alignItems: "center", gap: "10px" }}>
               <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" 
                 style={{
                   display: "flex", alignItems: "center", gap: "6px",
@@ -259,19 +259,21 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* ── Mobile Hamburger ──────────────────────────────────────────────── */}
-            <button
-              className="md:hidden"
-              onClick={() => setMobileOpen((v) => !v)}
-              aria-label="Toggle menu"
-              id="mobile-menu-toggle"
-              style={{
-                padding: "8px", borderRadius: "10px", border: "none",
-                background: "none", cursor: "pointer", color: "#8b8ba8",
-              }}
-            >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            {/* ── Mobile Hamburger & Icons ──────────────────────────────────────── */}
+            <div className="flex lg:hidden items-center gap-4">
+              {user && <NotificationBell />}
+              <button
+                onClick={() => setMobileOpen((v) => !v)}
+                aria-label="Toggle menu"
+                id="mobile-menu-toggle"
+                style={{
+                  padding: "8px", borderRadius: "10px", border: "none",
+                  background: "none", cursor: "pointer", color: "#8b8ba8",
+                }}
+              >
+                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </div>
           </div>
         </div>
 
