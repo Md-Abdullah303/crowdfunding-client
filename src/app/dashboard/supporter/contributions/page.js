@@ -13,7 +13,7 @@ const STATUS = {
   rejected: { label: "Rejected", color: "#ef4444", bg: "rgba(239,68,68,0.1)",  icon: <XCircle size={11} /> },
 };
 
-const LIMIT = 8;
+const LIMIT = 5;
 
 export default function MyContributionsPage() {
   const [contributions, setContributions] = useState([]);
