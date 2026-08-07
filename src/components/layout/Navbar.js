@@ -219,29 +219,33 @@ export default function Navbar() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="xl:hidden border-t border-white/5 bg-[#09090f]/98 backdrop-blur-3xl overflow-hidden"
+              initial={{ opacity: 0, height: 0, y: -10 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="xl:hidden border-t border-white/5 bg-[#09090f]/95 backdrop-blur-3xl overflow-hidden shadow-2xl"
             >
-              <div className="container mx-auto px-4 py-6 flex flex-col gap-2">
+              <div className="container mx-auto px-4 py-6 flex flex-col gap-3">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold text-[#d4d4e0] hover:bg-white/5 hover:text-white transition-all"
+                    className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-semibold text-[#8b8ba8] hover:bg-white/5 hover:text-white transition-all group"
                   >
-                    {link.icon} {link.label}
+                    <span className="text-[#a855f7] opacity-70 group-hover:opacity-100 transition-opacity">
+                      {link.icon}
+                    </span>
+                    {link.label}
                   </Link>
                 ))}
                 
-                <div className="w-full h-px bg-white/5 my-2" />
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-2" />
                 
                 <a
                   href="https://github.com/Md-Abdullah303/crowdfunding-client"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-bold text-[#a855f7] bg-[#a855f7]/10"
+                  className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-bold text-[#a855f7] bg-[#a855f7]/5 border border-[#a855f7]/20 hover:bg-[#a855f7]/10 transition-all"
                 >
                   Join as Developer
                 </a>
@@ -250,30 +254,32 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/dashboard"
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold text-white bg-white/5"
+                      className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-bold text-white bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all"
                     >
-                      <LayoutDashboard size={18} className="text-[#a855f7]" />
+                      <span className="text-[#6c47ff]">
+                        <LayoutDashboard size={18} />
+                      </span>
                       Dashboard
                     </Link>
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold text-[#ef4444] hover:bg-[#ef4444]/10 transition-all text-left w-full"
+                      className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-bold text-[#ef4444] bg-[#ef4444]/5 border border-[#ef4444]/10 hover:bg-[#ef4444]/10 transition-all text-left w-full"
                     >
                       <LogOut size={18} />
                       Sign Out
                     </button>
                   </>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div className="grid grid-cols-2 gap-4 mt-3">
                     <Link
                       href="/login"
-                      className="flex items-center justify-center py-3 rounded-xl text-[15px] font-bold text-[#d4d4e0] bg-white/5 hover:bg-white/10 transition-all"
+                      className="flex items-center justify-center py-3.5 rounded-2xl text-[15px] font-bold text-[#d4d4e0] bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all"
                     >
                       Log In
                     </Link>
                     <Link
                       href="/register"
-                      className="flex items-center justify-center gap-2 py-3 rounded-xl text-[15px] font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_4px_20px_rgba(168,85,247,0.3)]"
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-[15px] font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_8px_25px_-8px_rgba(168,85,247,0.5)]"
                     >
                       <UserPlus size={18} />
                       Register
