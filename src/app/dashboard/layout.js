@@ -21,7 +21,8 @@ import {
   Users,
   Layers,
   Shield,
-  Coins
+  Coins,
+  AlertTriangle
 } from "lucide-react";
 
 import { useSession, signOut } from "@/lib/auth-client";
@@ -55,6 +56,7 @@ export default function DashboardLayout({ children }) {
     { name: "User Management", href: "/dashboard/admin/users", icon: <Users size={18} /> },
     { name: "All Campaigns", href: "/dashboard/admin/all-campaigns", icon: <Layers size={18} /> },
     { name: "Withdrawals", href: "/dashboard/admin/wallet", icon: <Wallet size={18} /> },
+    { name: "Reports", href: "/dashboard/admin/reports", icon: <AlertTriangle size={18} /> },
     { name: "Account Settings", href: "/dashboard/admin/settings", icon: <Settings size={18} /> },
   ] : role === "creator" ? [
     { name: "Overview", href: "/dashboard/creator", icon: <LayoutDashboard size={18} /> },
