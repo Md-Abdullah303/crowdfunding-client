@@ -18,6 +18,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
+import NotificationBell from "./NotificationBell";
 
 const navLinks = [
   { href: "/campaigns", label: "Explore", icon: <Compass size={15} /> },
@@ -145,89 +146,92 @@ export default function Navbar() {
               {isPending ? (
                 <div className="skeleton" style={{ width: "120px", height: "38px", borderRadius: "10px" }} />
               ) : user ? (
-                <div style={{ position: "relative" }}>
-                  <button
-                    onClick={() => setDropdownOpen((v) => !v)}
-                    id="user-menu-btn"
-                    style={{
-                      display: "flex", alignItems: "center", gap: "10px",
-                      padding: "6px 12px 6px 6px", borderRadius: "12px",
-                      border: "1px solid rgba(255,255,255,0.09)",
-                      background: "rgba(19,19,31,0.8)",
-                      cursor: "pointer",
-                      transition: "border-color 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.45)"}
-                    onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)"}
-                  >
-                    {user.image ? (
-                      <img src={user.image} alt={user.name} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }} />
-                    ) : (
-                      <div style={{
-                        width: "28px", height: "28px", borderRadius: "50%",
-                        background: "linear-gradient(135deg,#6c47ff,#a855f7)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0,
-                      }}>
-                        {user.name?.[0]?.toUpperCase()}
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <NotificationBell />
+                  <div style={{ position: "relative" }}>
+                    <button
+                      onClick={() => setDropdownOpen((v) => !v)}
+                      id="user-menu-btn"
+                      style={{
+                        display: "flex", alignItems: "center", gap: "10px",
+                        padding: "6px 12px 6px 6px", borderRadius: "12px",
+                        border: "1px solid rgba(255,255,255,0.09)",
+                        background: "rgba(19,19,31,0.8)",
+                        cursor: "pointer",
+                        transition: "border-color 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.45)"}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)"}
+                    >
+                      {user.image ? (
+                        <img src={user.image} alt={user.name} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{
+                          width: "28px", height: "28px", borderRadius: "50%",
+                          background: "linear-gradient(135deg,#6c47ff,#a855f7)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0,
+                        }}>
+                          {user.name?.[0]?.toUpperCase()}
+                        </div>
+                      )}
+                      <div style={{ textAlign: "left" }}>
+                        <p style={{ fontSize: "12px", fontWeight: 600, color: "#f1f1f5", lineHeight: 1 }}>{user.name?.split(" ")[0]}</p>
+                        <p style={{ fontSize: "10px", color: "#8b8ba8", textTransform: "capitalize" }}>{user.role}</p>
                       </div>
-                    )}
-                    <div style={{ textAlign: "left" }}>
-                      <p style={{ fontSize: "12px", fontWeight: 600, color: "#f1f1f5", lineHeight: 1 }}>{user.name?.split(" ")[0]}</p>
-                      <p style={{ fontSize: "10px", color: "#8b8ba8", textTransform: "capitalize" }}>{user.role}</p>
-                    </div>
-                    <div style={{
-                      display: "flex", alignItems: "center", gap: "3px",
-                      padding: "2px 8px", borderRadius: "999px",
-                      background: "rgba(108,71,255,0.15)", border: "1px solid rgba(108,71,255,0.25)",
-                    }}>
-                      <Coins size={10} style={{ color: "#8b6bff" }} />
-                      <span style={{ fontSize: "10px", fontWeight: 700, color: "#8b6bff" }}>{user.credits ?? 0}</span>
-                    </div>
-                    <ChevronDown size={13} style={{ color: "#8b8ba8", transform: dropdownOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
-                  </button>
+                      <div style={{
+                        display: "flex", alignItems: "center", gap: "3px",
+                        padding: "2px 8px", borderRadius: "999px",
+                        background: "rgba(108,71,255,0.15)", border: "1px solid rgba(108,71,255,0.25)",
+                      }}>
+                        <Coins size={10} style={{ color: "#8b6bff" }} />
+                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#8b6bff" }}>{user.credits ?? 0}</span>
+                      </div>
+                      <ChevronDown size={13} style={{ color: "#8b8ba8", transform: dropdownOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                    </button>
 
-                  <AnimatePresence>
-                    {dropdownOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                        transition={{ duration: 0.14 }}
-                        style={{
-                          position: "absolute", right: 0, top: "calc(100% + 8px)",
-                          width: "200px", background: "rgba(15,15,26,0.95)",
-                          border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px",
-                          padding: "6px", backdropFilter: "blur(20px)",
-                          boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
-                        }}
-                      >
-                        <Link href="/dashboard" style={{
-                          display: "flex", alignItems: "center", gap: "10px",
-                          padding: "10px 12px", borderRadius: "10px",
-                          fontSize: "13px", color: "#f1f1f5", textDecoration: "none",
-                          transition: "background 0.15s",
-                        }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = "rgba(108,71,255,0.1)"}
-                          onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                          transition={{ duration: 0.14 }}
+                          style={{
+                            position: "absolute", right: 0, top: "calc(100% + 8px)",
+                            width: "200px", background: "rgba(15,15,26,0.95)",
+                            border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px",
+                            padding: "6px", backdropFilter: "blur(20px)",
+                            boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
+                          }}
                         >
-                          <LayoutDashboard size={15} /> Dashboard
-                        </Link>
-                        <hr style={{ margin: "4px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
-                        <button onClick={handleSignOut} id="sign-out-btn" style={{
-                          width: "100%", display: "flex", alignItems: "center", gap: "10px",
-                          padding: "10px 12px", borderRadius: "10px",
-                          fontSize: "13px", color: "#ef4444", background: "none",
-                          border: "none", cursor: "pointer", transition: "background 0.15s",
-                        }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239,68,68,0.08)"}
-                          onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                        >
-                          <LogOut size={15} /> Sign Out
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                          <Link href="/dashboard" style={{
+                            display: "flex", alignItems: "center", gap: "10px",
+                            padding: "10px 12px", borderRadius: "10px",
+                            fontSize: "13px", color: "#f1f1f5", textDecoration: "none",
+                            transition: "background 0.15s",
+                          }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(108,71,255,0.1)"}
+                            onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                          >
+                            <LayoutDashboard size={15} /> Dashboard
+                          </Link>
+                          <hr style={{ margin: "4px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
+                          <button onClick={handleSignOut} id="sign-out-btn" style={{
+                            width: "100%", display: "flex", alignItems: "center", gap: "10px",
+                            padding: "10px 12px", borderRadius: "10px",
+                            fontSize: "13px", color: "#ef4444", background: "none",
+                            border: "none", cursor: "pointer", transition: "background 0.15s",
+                          }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239,68,68,0.08)"}
+                            onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                          >
+                            <LogOut size={15} /> Sign Out
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
               ) : (
                 <>

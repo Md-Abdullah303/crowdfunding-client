@@ -23,9 +23,11 @@ import {
   Shield,
   Coins
 } from "lucide-react";
+
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
+import NotificationBell from "@/components/layout/NotificationBell";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -224,15 +226,26 @@ export default function DashboardLayout({ children }) {
         <div className="lg:hidden" style={{ 
           padding: "16px 20px", display: "flex", alignItems: "center", gap: "12px", 
           borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(9,9,15,0.8)",
-          backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 30
+          backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 30,
+          justifyContent: "space-between"
         }}>
-          <button 
-            onClick={() => setSidebarOpen(true)}
-            style={{ background: "none", border: "none", color: "#f1f1f5", cursor: "pointer", display: "flex" }}
-          >
-            <Menu size={20} />
-          </button>
-          <span style={{ fontSize: "15px", fontWeight: 600, color: "#fff" }}>Dashboard</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              style={{ background: "none", border: "none", color: "#f1f1f5", cursor: "pointer", display: "flex" }}
+            >
+              <Menu size={20} />
+            </button>
+            <span style={{ fontSize: "15px", fontWeight: 600, color: "#fff" }}>Dashboard</span>
+          </div>
+          <NotificationBell />
+        </div>
+
+        {/* Desktop Header Topbar (Only for Bell) */}
+        <div className="hidden lg:flex" style={{
+          padding: "20px 24px 0", justifyContent: "flex-end", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 30
+        }}>
+          <NotificationBell />
         </div>
 
         {/* Content Container */}
