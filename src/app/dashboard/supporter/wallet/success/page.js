@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, Loader2, ArrowRight } from "lucide-react";
 import api from "@/lib/axios";
 import Link from "next/link";
 
-export default function PaymentSuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get("session_id");
@@ -29,7 +29,7 @@ export default function PaymentSuccessPage() {
   }, [sessionId]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+    <>
       {status === "loading" && (
         <div style={{ textAlign: "center" }}>
           <Loader2 size={50} className="animate-spin" style={{ color: "#a855f7", margin: "0 auto 20px" }} />
@@ -64,6 +64,21 @@ export default function PaymentSuccessPage() {
           <Link href="/dashboard/supporter/wallet" style={{ color: "#a855f7", fontWeight: 700 }}>Go back to wallet</Link>
         </div>
       )}
+    </>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+      <Suspense fallback={
+        <div style={{ textAlign: "center" }}>
+          <Loader2 size={50} className="animate-spin" style={{ color: "#a855f7", margin: "0 auto 20px" }} />
+          <p style={{ color: "#8b8ba8", fontSize: "18px" }}>Loading payment details...</p>
+        </div>
+      }>
+        <SuccessContent />
+      </Suspense>
     </div>
   );
 }
