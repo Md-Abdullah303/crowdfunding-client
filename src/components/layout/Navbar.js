@@ -16,14 +16,15 @@ import {
   Info,
   Grid3x3,
   UserPlus,
+  Github
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import NotificationBell from "./NotificationBell";
 
 const navLinks = [
-  { href: "/campaigns", label: "Explore", icon: <Compass size={15} /> },
-  { href: "/#how-it-works", label: "How It Works", icon: <Info size={15} /> },
-  { href: "/#categories", label: "Categories", icon: <Grid3x3 size={15} /> },
+  { href: "/campaigns", label: "Explore", icon: <Compass size={16} /> },
+  { href: "/#how-it-works", label: "How It Works", icon: <Info size={16} /> },
+  { href: "/#categories", label: "Categories", icon: <Grid3x3 size={16} /> },
 ];
 
 export default function Navbar() {
@@ -59,81 +60,39 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          transition: "background 0.3s ease, box-shadow 0.3s ease",
-          background: scrolled
-            ? "rgba(9,9,15,0.92)"
-            : "rgba(9,9,15,0.3)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          boxShadow: scrolled
-            ? "0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.4)"
-            : "none",
-        }}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-[#09090f]/95 backdrop-blur-xl border-b border-white/5 shadow-2xl"
+            : "bg-gradient-to-b from-[#09090f]/80 to-transparent"
+        }`}
       >
-        <div className="container">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "68px" }}>
-
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between h-[72px] gap-4">
+            
             {/* ── Logo ────────────────────────────────────────────────────────── */}
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-              <div style={{
-                width: "36px", height: "36px", borderRadius: "10px", overflow: "hidden",
-                boxShadow: "0 0 20px rgba(108,71,255,0.45)",
-                flexShrink: 0,
-              }}>
-                <Image src="/logo.png" alt="FundFlow logo" width={36} height={36} style={{ objectFit: "cover" }} />
+            <Link href="/" className="flex items-center gap-3 shrink-0 group">
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(108,71,255,0.4)] group-hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all duration-300">
+                <Image src="/logo.png" alt="FundFlow logo" fill className="object-cover" />
               </div>
-              <span style={{
-                fontSize: "1.15rem", fontWeight: 800,
-                fontFamily: "Plus Jakarta Sans, Inter, sans-serif",
-                background: "linear-gradient(135deg, #6c47ff, #a855f7)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
+              <span className="text-xl font-black tracking-tight bg-gradient-to-br from-[#6c47ff] to-[#a855f7] bg-clip-text text-transparent">
                 FundFlow
               </span>
             </Link>
 
             {/* ── Desktop Nav ──────────────────────────────────────────────────── */}
-            <nav style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden xl:flex">
+            <nav className="hidden xl:flex items-center gap-1">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    style={{
-                      display: "flex", alignItems: "center", gap: "6px",
-                      padding: "7px 14px", borderRadius: "10px",
-                      fontSize: "0.875rem", fontWeight: 500,
-                      textDecoration: "none",
-                      whiteSpace: "nowrap",
-                      color: active ? "#a78bfa" : "#8b8ba8",
-                      background: active ? "rgba(108,71,255,0.1)" : "transparent",
-                      transition: "all 0.18s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.color = "#f1f1f5";
-                        e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.color = "#8b8ba8";
-                        e.currentTarget.style.background = "transparent";
-                      }
-                    }}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                      active
+                        ? "text-[#a855f7] bg-[#a855f7]/10"
+                        : "text-[#8b8ba8] hover:text-[#f1f1f5] hover:bg-white/5"
+                    }`}
                   >
                     {link.icon}
                     {link.label}
@@ -142,139 +101,117 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* ── Auth Area ────────────────────────────────────────────────────── */}
-            <div className="hidden xl:flex" style={{ alignItems: "center", gap: "10px" }}>
-              <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" 
-                style={{
-                  display: "flex", alignItems: "center", gap: "6px",
-                  padding: "7px 14px", borderRadius: "10px",
-                  fontSize: "0.875rem", fontWeight: 600, color: "#a855f7",
-                  textDecoration: "none", transition: "all 0.18s ease",
-                  whiteSpace: "nowrap",
-                  border: "1px solid rgba(168,85,247,0.3)",
-                  background: "rgba(168,85,247,0.05)"
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.15)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.05)"; }}
+            {/* ── Desktop Auth Area ────────────────────────────────────────────── */}
+            <div className="hidden xl:flex items-center gap-4 shrink-0">
+              <a
+                href="https://github.com/Md-Abdullah303/crowdfunding-client"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-[#a855f7] bg-[#a855f7]/10 border border-[#a855f7]/30 hover:bg-[#a855f7]/20 transition-all duration-200 whitespace-nowrap"
               >
+                <Github size={16} />
                 Join as Developer
               </a>
+
               {isPending ? (
-                <div className="skeleton" style={{ width: "120px", height: "38px", borderRadius: "10px" }} />
+                <div className="w-32 h-10 bg-white/5 animate-pulse rounded-xl" />
               ) : user ? (
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div className="flex items-center gap-3">
                   <NotificationBell />
-                  <div style={{ position: "relative" }}>
+
+                  <div className="relative">
                     <button
-                      onClick={() => setDropdownOpen((v) => !v)}
-                      id="user-menu-btn"
-                      style={{
-                        display: "flex", alignItems: "center", gap: "10px",
-                        padding: "6px 12px 6px 6px", borderRadius: "12px",
-                        border: "1px solid rgba(255,255,255,0.09)",
-                        background: "rgba(19,19,31,0.8)",
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                        transition: "border-color 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.45)"}
-                      onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)"}
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-xl border border-white/10 bg-[#13131f]/80 hover:border-[#6c47ff]/50 transition-all whitespace-nowrap"
                     >
                       {user.image ? (
-                        <img src={user.image} alt={user.name} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }} />
+                        <img
+                          src={user.image}
+                          alt="Profile"
+                          className="w-8 h-8 rounded-lg object-cover"
+                        />
                       ) : (
-                        <div style={{
-                          width: "28px", height: "28px", borderRadius: "50%",
-                          background: "linear-gradient(135deg,#6c47ff,#a855f7)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          color: "#fff", fontSize: "12px", fontWeight: 700, flexShrink: 0,
-                        }}>
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6c47ff] to-[#a855f7] flex items-center justify-center text-white font-bold text-sm">
                           {user.name?.[0]?.toUpperCase()}
                         </div>
                       )}
-                      <div style={{ textAlign: "left" }}>
-                        <p style={{ fontSize: "12px", fontWeight: 600, color: "#f1f1f5", lineHeight: 1 }}>{user.name?.split(" ")[0]}</p>
-                        <p style={{ fontSize: "10px", color: "#8b8ba8", textTransform: "capitalize" }}>{user.role}</p>
+                      <div className="flex flex-col items-start">
+                        <span className="text-sm font-bold text-[#f1f1f5] leading-tight">
+                          {user.name?.split(" ")[0]}
+                        </span>
+                        <span className="text-[10px] font-bold text-[#a855f7] uppercase tracking-wider">
+                          {user.role}
+                        </span>
                       </div>
-                      <div style={{
-                        display: "flex", alignItems: "center", gap: "3px",
-                        padding: "2px 8px", borderRadius: "999px",
-                        background: "rgba(108,71,255,0.15)", border: "1px solid rgba(108,71,255,0.25)",
-                      }}>
-                        <Coins size={10} style={{ color: "#8b6bff" }} />
-                        <span style={{ fontSize: "10px", fontWeight: 700, color: "#8b6bff" }}>{user.credits ?? 0}</span>
-                      </div>
-                      <ChevronDown size={13} style={{ color: "#8b8ba8", transform: dropdownOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                      <ChevronDown
+                        size={14}
+                        className={`text-[#8b8ba8] transition-transform duration-200 ${
+                          dropdownOpen ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
 
                     <AnimatePresence>
                       {dropdownOpen && (
                         <motion.div
-                          initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                          transition={{ duration: 0.14 }}
-                          style={{
-                            position: "absolute", right: 0, top: "calc(100% + 8px)",
-                            width: "200px", background: "rgba(15,15,26,0.95)",
-                            border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px",
-                            padding: "6px", backdropFilter: "blur(20px)",
-                            boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
-                          }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute right-0 top-full mt-2 w-56 bg-[#13131f] border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden"
                         >
-                          <Link href="/dashboard" style={{
-                            display: "flex", alignItems: "center", gap: "10px",
-                            padding: "10px 12px", borderRadius: "10px",
-                            fontSize: "13px", color: "#f1f1f5", textDecoration: "none",
-                            transition: "background 0.15s",
-                          }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(108,71,255,0.1)"}
-                            onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                          >
-                            <LayoutDashboard size={15} /> Dashboard
-                          </Link>
-                          <hr style={{ margin: "4px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
-                          <button onClick={handleSignOut} id="sign-out-btn" style={{
-                            width: "100%", display: "flex", alignItems: "center", gap: "10px",
-                            padding: "10px 12px", borderRadius: "10px",
-                            fontSize: "13px", color: "#ef4444", background: "none",
-                            border: "none", cursor: "pointer", transition: "background 0.15s",
-                          }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239,68,68,0.08)"}
-                            onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                          >
-                            <LogOut size={15} /> Sign Out
-                          </button>
+                          <div className="p-4 border-b border-white/5 bg-white/[0.02]">
+                            <div className="text-sm font-bold text-white truncate">{user.name}</div>
+                            <div className="text-xs text-[#8b8ba8] truncate">{user.email}</div>
+                          </div>
+                          <div className="p-2 flex flex-col gap-1">
+                            <Link
+                              href="/dashboard"
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#d4d4e0] hover:text-white hover:bg-white/5 transition-all"
+                            >
+                              <LayoutDashboard size={16} className="text-[#a855f7]" />
+                              Dashboard
+                            </Link>
+                            <button
+                              onClick={handleSignOut}
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-[#ef4444] hover:bg-[#ef4444]/10 transition-all w-full text-left"
+                            >
+                              <LogOut size={16} />
+                              Sign Out
+                            </button>
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
                 </div>
               ) : (
-                <>
-                  <Link href="/login" className="btn-secondary" style={{ fontSize: "0.875rem", padding: "8px 18px" }}>
+                <div className="flex items-center gap-3 shrink-0">
+                  <Link
+                    href="/login"
+                    className="px-5 py-2 rounded-xl text-sm font-bold text-[#d4d4e0] hover:text-white hover:bg-white/5 transition-all whitespace-nowrap"
+                  >
                     Log In
                   </Link>
-                  <Link href="/register" className="btn-primary" style={{ fontSize: "0.875rem", padding: "8px 18px" }}>
-                    <UserPlus size={14} /> Get Started
+                  <Link
+                    href="/register"
+                    className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all whitespace-nowrap"
+                  >
+                    <UserPlus size={16} />
+                    Get Started
                   </Link>
-                </>
+                </div>
               )}
             </div>
 
             {/* ── Mobile Hamburger & Icons ──────────────────────────────────────── */}
-            <div className="flex xl:hidden items-center gap-4">
+            <div className="flex xl:hidden items-center gap-3 shrink-0">
               {user && <NotificationBell />}
               <button
-                onClick={() => setMobileOpen((v) => !v)}
-                aria-label="Toggle menu"
-                id="mobile-menu-toggle"
-                style={{
-                  padding: "8px", borderRadius: "10px", border: "none",
-                  background: "none", cursor: "pointer", color: "#8b8ba8",
-                }}
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="p-2 rounded-xl bg-white/5 text-[#d4d4e0] hover:bg-white/10 transition-colors"
               >
-                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                {mobileOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
           </div>
@@ -287,56 +224,73 @@ export default function Navbar() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22 }}
-              style={{
-                overflow: "hidden",
-                borderTop: "1px solid rgba(255,255,255,0.06)",
-                background: "rgba(9,9,15,0.97)",
-              }}
+              className="xl:hidden border-t border-white/5 bg-[#09090f]/98 backdrop-blur-3xl overflow-hidden"
             >
-              <div className="container" style={{ paddingTop: "12px", paddingBottom: "16px", display: "flex", flexDirection: "column", gap: "4px" }}>
+              <div className="container mx-auto px-4 py-6 flex flex-col gap-2">
                 {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href} style={{
-                    display: "flex", alignItems: "center", gap: "10px",
-                    padding: "12px 16px", borderRadius: "12px",
-                    fontSize: "14px", fontWeight: 500,
-                    color: "#8b8ba8", textDecoration: "none",
-                  }}>
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold text-[#d4d4e0] hover:bg-white/5 hover:text-white transition-all"
+                  >
                     {link.icon} {link.label}
                   </Link>
                 ))}
-                <hr style={{ margin: "8px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
-                <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" style={{
-                  display: "flex", alignItems: "center", gap: "10px",
-                  padding: "12px 16px", borderRadius: "12px",
-                  fontSize: "14px", fontWeight: 600,
-                  color: "#a855f7", textDecoration: "none", background: "rgba(168,85,247,0.05)"
-                }}>
+                
+                <div className="w-full h-px bg-white/5 my-2" />
+                
+                <a
+                  href="https://github.com/Md-Abdullah303/crowdfunding-client"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-bold text-[#a855f7] bg-[#a855f7]/10"
+                >
+                  <Github size={18} />
                   Join as Developer
                 </a>
+
                 {user ? (
                   <>
-                    <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "12px", fontSize: "14px", color: "#f1f1f5", textDecoration: "none" }}>
-                      <LayoutDashboard size={15} /> Dashboard
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold text-white bg-white/5"
+                    >
+                      <LayoutDashboard size={18} className="text-[#a855f7]" />
+                      Dashboard
                     </Link>
-                    <button onClick={handleSignOut} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "12px", fontSize: "14px", color: "#ef4444", background: "none", border: "none", cursor: "pointer", width: "100%" }}>
-                      <LogOut size={15} /> Sign Out
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-semibold text-[#ef4444] hover:bg-[#ef4444]/10 transition-all text-left w-full"
+                    >
+                      <LogOut size={18} />
+                      Sign Out
                     </button>
                   </>
                 ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
-                    <Link href="/login" className="btn-secondary" style={{ justifyContent: "center" }}>Log In</Link>
-                    <Link href="/register" className="btn-primary" style={{ justifyContent: "center" }}><UserPlus size={14} /> Get Started</Link>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <Link
+                      href="/login"
+                      className="flex items-center justify-center py-3 rounded-xl text-[15px] font-bold text-[#d4d4e0] bg-white/5 hover:bg-white/10 transition-all"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="flex items-center justify-center gap-2 py-3 rounded-xl text-[15px] font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_4px_20px_rgba(168,85,247,0.3)]"
+                    >
+                      <UserPlus size={18} />
+                      Register
+                    </Link>
                   </div>
                 )}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.header>
+      </header>
 
       {/* Spacer */}
-      <div style={{ height: "68px" }} />
+      <div className="h-[72px]" />
     </>
   );
 }
