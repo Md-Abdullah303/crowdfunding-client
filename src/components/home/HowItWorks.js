@@ -79,18 +79,11 @@ export default function HowItWorks() {
         </motion.div>
 
         {/* Steps */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "24px", position: "relative" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
 
           {/* Connecting line (desktop) */}
-          <div style={{
-            position: "absolute",
-            top: "56px",
-            left: "calc(12.5% + 24px)",
-            right: "calc(12.5% + 24px)",
-            height: "2px",
+          <div className="hidden lg:block absolute top-[56px] left-[12.5%] right-[12.5%] h-[2px] z-0" style={{
             background: "linear-gradient(to right, #6c47ff40, #a855f740, #ff6b3540, #22c55e40)",
-            zIndex: 0,
-            display: "none", // hidden on mobile; use CSS media query in production
           }} />
 
           {steps.map((s, i) => (

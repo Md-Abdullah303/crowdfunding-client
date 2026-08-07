@@ -258,7 +258,7 @@ export default function CampaignDetailsPage() {
           Back to Explore
         </Link>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+        <div className="flex flex-col lg:flex-row gap-10">
           
           {/* Left Column: Image & Details */}
           <div style={{ flex: "1 1 60%" }}>
@@ -268,7 +268,7 @@ export default function CampaignDetailsPage() {
               <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: "999px", fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", background: cat.bg, color: cat.text, border: `1px solid ${cat.border}`, marginBottom: "16px" }}>
                 {campaign.category}
               </span>
-              <h1 style={{ fontSize: "38px", fontWeight: 900, color: "#f1f1f5", lineHeight: 1.2, marginBottom: "16px" }}>
+              <h1 className="text-3xl md:text-5xl font-black text-[#f1f1f5] leading-tight mb-4">
                 {campaign.title}
               </h1>
               
@@ -300,7 +300,7 @@ export default function CampaignDetailsPage() {
           </div>
 
           {/* Right Column: Funding Box */}
-          <div style={{ flex: "1 1 40%", maxWidth: "450px" }}>
+          <div style={{ flex: "1 1 40%", width: "100%", maxWidth: "450px", margin: "0 auto lg:margin-0" }}>
             <div style={{ position: "sticky", top: "100px", background: "rgba(19,19,31,0.6)", backdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid rgba(255,255,255,0.06)", padding: "32px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" }}>
               
               {/* Progress */}

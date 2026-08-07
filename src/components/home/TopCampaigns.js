@@ -364,11 +364,7 @@ export default function TopCampaigns() {
         </div>
 
         {/* Cards Grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: "24px",
-        }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {MOCK_CAMPAIGNS.map((c, i) => (
             <CampaignCard key={c.id} campaign={c} index={i} />
           ))}

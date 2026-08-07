@@ -161,13 +161,19 @@ body {
 
 /* ─── Section Spacing ───────────────────────────────────────────────────────── */
 .section {
-  padding: 5rem 0;
+  padding: 3rem 0;
+}
+@media (min-width: 768px) {
+  .section { padding: 5rem 0; }
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
+}
+@media (min-width: 768px) {
+  .container { padding: 0 1.5rem; }
 }
 
 /* ─── Badge ──────────────────────────────────────────────────────────────────── */

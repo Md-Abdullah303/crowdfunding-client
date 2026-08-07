@@ -123,7 +123,7 @@ export default function Testimonials() {
         </motion.div>
 
         {/* Cards grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px", marginBottom: "48px" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {testimonials.map((item, i) => {
             const isActive = i === active;
             return (

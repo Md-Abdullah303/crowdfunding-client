@@ -53,7 +53,7 @@ export default function Footer() {
       <div className="container" style={{ paddingTop: "64px", paddingBottom: "32px" }}>
 
         {/* Main grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.8fr 1fr 1fr 1fr", gap: "40px", marginBottom: "56px" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
 
           {/* Brand col */}
           <div>
