@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import api from "@/lib/axios";
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
+  const { data: session, refetch: refetchSession } = useSession();
   const user = session?.user;
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +67,8 @@ export default function SettingsPage() {
         name: formData.name,
         image: imagePreview,
       });
-      toast.success("Settings saved successfully! You may need to refresh to see the changes everywhere.");
+      await refetchSession();
+      toast.success("Settings saved successfully!");
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Failed to save settings");

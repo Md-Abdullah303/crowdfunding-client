@@ -11,7 +11,7 @@ import api from "@/lib/axios";
 const IMGBB_API_KEY = "381cf4c5171920c0fa0a6254cd865633";
 
 export default function SettingsPage() {
-  const { data: session, refetch } = useSession();
+  const { data: session, refetch: refetchSession } = useSession();
   const user = session?.user;
   
   const [loading, setLoading] = useState(false);
@@ -107,7 +107,7 @@ export default function SettingsPage() {
 
       if (res.data.success) {
         toast.success("Profile updated successfully!");
-        refetch(); // Refresh auth session to update navbar avatar
+        refetchSession(); // Refresh auth session to update navbar avatar
       } else {
         toast.error(res.data.message || "Failed to update profile");
       }
