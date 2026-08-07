@@ -117,6 +117,7 @@ export default function Navbar() {
                       padding: "7px 14px", borderRadius: "10px",
                       fontSize: "0.875rem", fontWeight: 500,
                       textDecoration: "none",
+                      whiteSpace: "nowrap",
                       color: active ? "#a78bfa" : "#8b8ba8",
                       background: active ? "rgba(108,71,255,0.1)" : "transparent",
                       transition: "all 0.18s ease",
@@ -149,6 +150,7 @@ export default function Navbar() {
                   padding: "7px 14px", borderRadius: "10px",
                   fontSize: "0.875rem", fontWeight: 600, color: "#a855f7",
                   textDecoration: "none", transition: "all 0.18s ease",
+                  whiteSpace: "nowrap",
                   border: "1px solid rgba(168,85,247,0.3)",
                   background: "rgba(168,85,247,0.05)"
                 }}
@@ -172,6 +174,7 @@ export default function Navbar() {
                         border: "1px solid rgba(255,255,255,0.09)",
                         background: "rgba(19,19,31,0.8)",
                         cursor: "pointer",
+                        whiteSpace: "nowrap",
                         transition: "border-color 0.2s ease",
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(108,71,255,0.45)"}
