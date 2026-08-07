@@ -47,6 +47,19 @@ export default function DashboardLayout({ children }) {
       .catch(() => {}); // silent fail, fallback to session
   }, [user, pathname]);
 
+  // Role-based Route Protection
+  useEffect(() => {
+    if (!user) return;
+    const role = user.role || "supporter";
+    if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
+      router.push("/forbidden");
+    } else if (pathname.startsWith("/dashboard/creator") && role !== "creator") {
+      router.push("/forbidden");
+    } else if (pathname.startsWith("/dashboard/supporter") && role !== "supporter") {
+      router.push("/forbidden");
+    }
+  }, [pathname, user, router]);
+
   const displayCredits = liveCredits ?? user?.credits ?? 0;
 
   const role = user?.role || "supporter";

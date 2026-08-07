@@ -1,5 +1,9 @@
 # 🌟 ElevateFund - Crowdfunding Platform
 
+<p align="center">
+  <img src="public/screenshot.png" alt="ElevateFund Screenshot" width="100%" />
+</p>
+
 Welcome to **ElevateFund**, a next-generation crowdfunding platform built with the MERN stack (MongoDB, Express, React/Next.js, Node.js). This platform empowers creators to launch campaigns and supporters to fund them using a secure credit-based system.
 
 ## 🚀 Live Demo

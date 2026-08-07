@@ -47,11 +47,18 @@ export default function CreatorWithdrawalPage() {
 
   const handleWithdraw = async (e) => {
     e.preventDefault();
+    if (!amount || isNaN(amount)) { toast.error("Enter a valid amount"); return; }
     if (amount < 100) { toast.error("Minimum withdrawal is 100 credits"); return; }
-    if (amount > balance.available) { toast.error(`Insufficient balance. Available: ${balance.available} credits`); return; }
-    if (!accountDetails.trim()) { toast.error("Please provide your account details"); return; }
-    setFormLoading(true);
+    if (amount > balance.available) { toast.error("Insufficient available balance"); return; }
+
+    // Disable withdrawal system for now
+    toast.error("This system does not work for now but will be added in the future!");
+    return;
+    
+    // Original code (bypassed)
+    /*
     try {
+      setFormLoading(true);
       await api.post("/api/withdrawals", {
         amountCredits: amount,
         paymentMethod: method,
@@ -67,6 +74,7 @@ export default function CreatorWithdrawalPage() {
     } finally {
       setFormLoading(false);
     }
+    */
   };
 
   const STATUS_CFG = {
