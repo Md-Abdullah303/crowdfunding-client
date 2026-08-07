@@ -143,6 +143,20 @@ export default function Navbar() {
 
             {/* ── Auth Area ────────────────────────────────────────────────────── */}
             <div className="hidden md:flex" style={{ alignItems: "center", gap: "10px" }}>
+              <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" 
+                style={{
+                  display: "flex", alignItems: "center", gap: "6px",
+                  padding: "7px 14px", borderRadius: "10px",
+                  fontSize: "0.875rem", fontWeight: 600, color: "#a855f7",
+                  textDecoration: "none", transition: "all 0.18s ease",
+                  border: "1px solid rgba(168,85,247,0.3)",
+                  background: "rgba(168,85,247,0.05)"
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.15)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.05)"; }}
+              >
+                Join as Developer
+              </a>
               {isPending ? (
                 <div className="skeleton" style={{ width: "120px", height: "38px", borderRadius: "10px" }} />
               ) : user ? (
@@ -287,6 +301,14 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <hr style={{ margin: "8px 0", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)" }} />
+                <a href="https://github.com/Md-Abdullah303/crowdfunding-client" target="_blank" rel="noopener noreferrer" style={{
+                  display: "flex", alignItems: "center", gap: "10px",
+                  padding: "12px 16px", borderRadius: "12px",
+                  fontSize: "14px", fontWeight: 600,
+                  color: "#a855f7", textDecoration: "none", background: "rgba(168,85,247,0.05)"
+                }}>
+                  Join as Developer
+                </a>
                 {user ? (
                   <>
                     <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "12px", fontSize: "14px", color: "#f1f1f5", textDecoration: "none" }}>
