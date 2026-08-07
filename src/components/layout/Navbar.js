@@ -230,7 +230,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-semibold text-[#8b8ba8] hover:bg-white/5 hover:text-white transition-all group"
+                    className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-semibold text-[#8b8ba8] hover:bg-white/5 hover:text-white transition-all group"
                   >
                     <span className="text-[#a855f7] opacity-70 group-hover:opacity-100 transition-opacity">
                       {link.icon}
@@ -245,7 +245,7 @@ export default function Navbar() {
                   href="https://github.com/Md-Abdullah303/crowdfunding-client"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-bold text-[#a855f7] bg-[#a855f7]/5 border border-[#a855f7]/20 hover:bg-[#a855f7]/10 transition-all"
+                  className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-bold text-[#a855f7] bg-[#a855f7]/5 border border-[#a855f7]/20 hover:bg-[#a855f7]/10 transition-all"
                 >
                   Join as Developer
                 </a>
@@ -254,7 +254,7 @@ export default function Navbar() {
                   <>
                     <Link
                       href="/dashboard"
-                      className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-bold text-white bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all"
+                      className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-bold text-white bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-all"
                     >
                       <span className="text-[#6c47ff]">
                         <LayoutDashboard size={18} />
@@ -263,7 +263,7 @@ export default function Navbar() {
                     </Link>
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-bold text-[#ef4444] bg-[#ef4444]/5 border border-[#ef4444]/10 hover:bg-[#ef4444]/10 transition-all text-left w-full"
+                      className="flex items-center gap-4 px-6 py-4 rounded-2xl text-[16px] font-bold text-[#ef4444] bg-[#ef4444]/5 border border-[#ef4444]/10 hover:bg-[#ef4444]/10 transition-all text-left w-full"
                     >
                       <LogOut size={18} />
                       Sign Out
@@ -273,13 +273,13 @@ export default function Navbar() {
                   <div className="grid grid-cols-2 gap-4 mt-3">
                     <Link
                       href="/login"
-                      className="flex items-center justify-center py-3.5 rounded-2xl text-[15px] font-bold text-[#d4d4e0] bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all"
+                      className="flex items-center justify-center py-4 rounded-2xl text-[16px] font-bold text-[#d4d4e0] bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all"
                     >
                       Log In
                     </Link>
                     <Link
                       href="/register"
-                      className="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-[15px] font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_8px_25px_-8px_rgba(168,85,247,0.5)]"
+                      className="flex items-center justify-center gap-2 py-4 rounded-2xl text-[16px] font-bold text-white bg-gradient-to-r from-[#6c47ff] to-[#a855f7] shadow-[0_8px_25px_-8px_rgba(168,85,247,0.5)]"
                     >
                       <UserPlus size={18} />
                       Register
