@@ -15,8 +15,7 @@ import {
   Compass,
   Info,
   Grid3x3,
-  UserPlus,
-  Github
+  UserPlus
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import NotificationBell from "./NotificationBell";
@@ -109,7 +108,6 @@ export default function Navbar() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-[#a855f7] bg-[#a855f7]/10 border border-[#a855f7]/30 hover:bg-[#a855f7]/20 transition-all duration-200 whitespace-nowrap"
               >
-                <Github size={16} />
                 Join as Developer
               </a>
 
@@ -245,7 +243,6 @@ export default function Navbar() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-bold text-[#a855f7] bg-[#a855f7]/10"
                 >
-                  <Github size={18} />
                   Join as Developer
                 </a>
 
