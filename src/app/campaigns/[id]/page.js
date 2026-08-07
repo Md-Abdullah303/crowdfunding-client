@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Clock, Target, Coins, Loader2, ArrowLeft, Heart, Share2, CalendarDays, X, Minus, Plus } from "lucide-react";
+import { Clock, Target, Coins, Loader2, ArrowLeft, Heart, Share2, CalendarDays, X, Minus, Plus, Flag } from "lucide-react";
 import api from "@/lib/axios";
 import { useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
@@ -119,6 +119,68 @@ function ContributeModal({ campaign, userCredits, onClose, onSuccess }) {
   );
 }
 
+// Report Modal
+function ReportModal({ campaign, onClose }) {
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!reason.trim()) { toast.error("Please provide a reason"); return; }
+    if (reason.length < 10) { toast.error("Reason must be at least 10 characters"); return; }
+    
+    setLoading(true);
+    try {
+      await api.post("/api/reports", { campaignId: campaign._id, reason });
+      toast.success("Report submitted successfully! Admins will review it.");
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to submit report");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}
+      onClick={onClose}
+    >
+      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ type: "spring", damping: 22 }}
+        onClick={e => e.stopPropagation()}
+        style={{ background: "rgba(19,19,31,0.98)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "28px", padding: "36px", width: "100%", maxWidth: "480px", boxShadow: "0 30px 70px rgba(0,0,0,0.6)" }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+          <div>
+            <h2 style={{ fontSize: "22px", fontWeight: 900, color: "#f87171", margin: "0 0 4px 0", display: "flex", alignItems: "center", gap: "8px" }}><Flag size={20} /> Report Campaign</h2>
+            <p style={{ fontSize: "13px", color: "#8b8ba8", margin: 0 }}>You are reporting: <span style={{ color: "#f1f1f5" }}>{campaign.title}</span></p>
+          </div>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#8b8ba8", cursor: "pointer", padding: "8px", borderRadius: "10px", display: "flex" }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        <p style={{ fontSize: "14px", color: "#a1a1aa", marginBottom: "16px", lineHeight: 1.5 }}>
+          If you believe this campaign is fraudulent, suspicious, or violates our terms, please provide a detailed reason below.
+        </p>
+
+        <textarea 
+          placeholder="Please describe why this campaign is suspicious..."
+          value={reason}
+          onChange={e => setReason(e.target.value)}
+          rows={5}
+          style={{ width: "100%", padding: "14px", background: "rgba(9,9,15,0.8)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", color: "#f1f1f5", fontSize: "15px", outline: "none", marginBottom: "24px", resize: "none" }}
+          onFocus={e => { e.currentTarget.style.borderColor = "#ef4444"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(239,68,68,0.15)"; }}
+          onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
+        />
+
+        <button onClick={handleSubmit} disabled={loading} style={{ width: "100%", padding: "16px", borderRadius: "14px", background: "#ef4444", color: "#fff", fontSize: "16px", fontWeight: 700, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+          {loading ? "Submitting..." : "Submit Report"}
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function CampaignDetailsPage() {
   const { id } = useParams();
   const { data: session } = useSession();
@@ -128,6 +190,7 @@ export default function CampaignDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const fetchCampaign = async () => {
     try {
@@ -305,6 +368,13 @@ export default function CampaignDetailsPage() {
                 <Share2 size={18} />
                 Share Campaign
               </button>
+
+              {isSupporter && (
+                <button onClick={() => setShowReportModal(true)} style={{ width: "100%", padding: "14px", borderRadius: "16px", background: "rgba(239,68,68,0.05)", color: "#f87171", fontSize: "16px", fontWeight: 700, border: "1px solid rgba(239,68,68,0.2)", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", transition: "background 0.2s", marginTop: "16px" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.15)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(239,68,68,0.05)"}>
+                  <Flag size={18} />
+                  Report Campaign
+                </button>
+              )}
             </div>
           </div>
           
@@ -319,6 +389,16 @@ export default function CampaignDetailsPage() {
             userCredits={user?.credits || 0}
             onClose={() => setShowModal(false)}
             onSuccess={fetchCampaign}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Report Modal */}
+      <AnimatePresence>
+        {showReportModal && (
+          <ReportModal
+            campaign={campaign}
+            onClose={() => setShowReportModal(false)}
           />
         )}
       </AnimatePresence>
