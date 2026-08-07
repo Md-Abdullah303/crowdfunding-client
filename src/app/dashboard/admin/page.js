@@ -1,5 +1,5 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Users,
@@ -7,17 +7,28 @@ import {
   FolderKanban
 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
-
-// Dummy Data for Admin
-const adminStats = [
-  { label: "Total Users", value: "1,248", icon: <Users size={20} />, color: "#3b82f6", bg: "rgba(59,130,246,0.1)" },
-  { label: "Platform Revenue", value: "$12,450", icon: <DollarSign size={20} />, color: "#10b981", bg: "rgba(16,185,129,0.1)" },
-  { label: "Active Campaigns", value: "45", icon: <FolderKanban size={20} />, color: "#a855f7", bg: "rgba(168,85,247,0.1)" },
-];
+import api from "@/lib/axios";
 
 export default function AdminDashboard() {
   const { data: session } = useSession();
   const user = session?.user;
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalCampaigns: 0,
+    totalRevenue: 0
+  });
+
+  useEffect(() => {
+    api.get("/api/admin/stats")
+      .then(res => setStats(res.data.data))
+      .catch(err => console.error("Failed to fetch admin stats"));
+  }, []);
+
+  const adminStats = [
+    { label: "Total Users", value: stats.totalUsers, icon: <Users size={20} />, color: "#3b82f6", bg: "rgba(59,130,246,0.1)" },
+    { label: "Platform Revenue", value: `$${stats.totalRevenue.toFixed(2)}`, icon: <DollarSign size={20} />, color: "#10b981", bg: "rgba(16,185,129,0.1)" },
+    { label: "Active Campaigns", value: stats.totalCampaigns, icon: <FolderKanban size={20} />, color: "#a855f7", bg: "rgba(168,85,247,0.1)" },
+  ];
 
   return (
     <motion.div
