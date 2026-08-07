@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌟 ElevateFund - Crowdfunding Platform
 
-## Getting Started
+Welcome to **ElevateFund**, a next-generation crowdfunding platform built with the MERN stack (MongoDB, Express, React/Next.js, Node.js). This platform empowers creators to launch campaigns and supporters to fund them using a secure credit-based system.
 
-First, run the development server:
+## 🚀 Live Demo
+🔗 **Live Site URL:** [https://elevatefund-client.vercel.app](https://elevatefund-client.vercel.app) *(Replace with actual live link if deployed)*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔐 Admin Credentials
+To access the Admin Dashboard and review platform management features, please use the following credentials:
+- **Email:** `admin@gmail.com` (or the one you registered)
+- **Password:** `123456`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features (Top 10)
+1. **Multi-Role Authentication (Better-Auth):** Seamless login/signup system with distinct dashboards for Supporters, Creators, and Admins.
+2. **Interactive Campaign Management:** Creators can easily launch, edit, and track their fundraising campaigns.
+3. **Credit-Based Contribution System:** Supporters can purchase virtual credits and use them to seamlessly back campaigns.
+4. **Real-Time Notification System:** Users receive live notifications (with a dynamic Bell Icon) for contributions, approvals, and withdrawals.
+5. **Comprehensive Admin Dashboard:** Admins can view live statistics, manage user roles, and oversee all platform activities.
+6. **Stripe Payment Integration:** Secure and reliable payment processing for purchasing platform credits.
+7. **Withdrawal Request System:** Creators can convert their earned credits into real money through admin-approved withdrawal requests.
+8. **Campaign Reporting System:** Supporters can flag suspicious campaigns, allowing admins to review, dismiss, or suspend them.
+9. **Responsive & Premium UI/UX:** Built with a stunning dark-mode glassmorphism design, enhanced by fluid Framer Motion animations.
+10. **Advanced Search & Filtering:** Users can easily explore campaigns with fast client-side filtering and pagination.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🛠️ Technology Stack
+- **Frontend:** Next.js, React, Tailwind CSS, Framer Motion, Lucide Icons, Axios
+- **Backend:** Node.js, Express.js, MongoDB, Mongoose, Stripe
+- **Authentication:** Better-Auth
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Local Setup
 
-## Learn More
+1. **Clone the repositories:**
+   ```bash
+   git clone <client-repo-url>
+   git clone <server-repo-url>
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Setup Server:**
+   ```bash
+   cd crowdfunding-server
+   npm install
+   # Create .env file with MONGODB_URI, BETTER_AUTH_SECRET, STRIPE_SECRET_KEY
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Setup Client:**
+   ```bash
+   cd crowdfunding-client
+   npm install
+   # Create .env.local with NEXT_PUBLIC_API_URL
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Developed with ❤️ as part of the Junior MERN Stack Developer Assessment.*
