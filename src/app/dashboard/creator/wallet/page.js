@@ -47,7 +47,7 @@ export default function CreatorWithdrawalPage() {
 
   const handleWithdraw = async (e) => {
     e.preventDefault();
-    if (amount < 200) { toast.error("Minimum withdrawal is 200 credits"); return; }
+    if (amount < 100) { toast.error("Minimum withdrawal is 100 credits"); return; }
     if (amount > balance.available) { toast.error(`Insufficient balance. Available: ${balance.available} credits`); return; }
     if (!accountDetails.trim()) { toast.error("Please provide your account details"); return; }
     setFormLoading(true);
@@ -60,7 +60,7 @@ export default function CreatorWithdrawalPage() {
       toast.success("Withdrawal request submitted! Admin will review it.");
       setAccountDetails("");
       setNote("");
-      setAmount(200);
+      setAmount(100);
       fetchData();
     } catch (err) {
       toast.error(err.response?.data?.message || "Request failed");
@@ -87,7 +87,7 @@ export default function CreatorWithdrawalPage() {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
       <div style={{ marginBottom: "32px" }}>
         <h1 style={{ fontSize: "28px", fontWeight: 800, color: "#fff", margin: "0 0 8px 0" }}>Withdraw Funds</h1>
-        <p style={{ color: "#8b8ba8", margin: 0, fontSize: "15px" }}>Request a withdrawal of your earned credits. Minimum 200 credits ($10).</p>
+        <p style={{ color: "#8b8ba8", margin: 0, fontSize: "15px" }}>Request a withdrawal of your earned credits. Minimum 100 credits ($5).</p>
       </div>
 
       {/* Balance Cards */}
@@ -122,7 +122,7 @@ export default function CreatorWithdrawalPage() {
             {/* Amount */}
             <div>
               <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "#a1a1aa", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Amount (Credits)</label>
-              <input type="number" value={amount} min={200} max={balance.available} onChange={e => setAmount(parseInt(e.target.value) || 200)}
+              <input type="number" value={amount} min={100} max={balance.available} onChange={e => setAmount(parseInt(e.target.value) || 100)}
                 style={{ width: "100%", padding: "14px 16px", background: "rgba(9,9,15,0.8)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", color: "#f1f1f5", fontSize: "18px", fontWeight: 800, outline: "none", boxSizing: "border-box" }}
                 onFocus={e => { e.currentTarget.style.borderColor = "#a855f7"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(168,85,247,0.15)"; }}
                 onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -163,10 +163,10 @@ export default function CreatorWithdrawalPage() {
               />
             </div>
 
-            <button type="submit" disabled={formLoading || balance.available < 200}
-              style={{ padding: "16px", borderRadius: "16px", background: balance.available < 200 ? "rgba(108,71,255,0.4)" : "linear-gradient(135deg, #a855f7, #6c47ff)", color: "#fff", fontSize: "16px", fontWeight: 800, border: "none", cursor: formLoading || balance.available < 200 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 10px 25px rgba(108,71,255,0.3)", transition: "all 0.2s" }}>
+            <button type="submit" disabled={formLoading || balance.available < 100}
+              style={{ padding: "16px", borderRadius: "16px", background: balance.available < 100 ? "rgba(108,71,255,0.4)" : "linear-gradient(135deg, #a855f7, #6c47ff)", color: "#fff", fontSize: "16px", fontWeight: 800, border: "none", cursor: formLoading || balance.available < 100 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 10px 25px rgba(108,71,255,0.3)", transition: "all 0.2s" }}>
               {formLoading ? <Loader2 size={20} className="animate-spin" /> : <Wallet size={20} />}
-              {balance.available < 200 ? "Need 200+ credits to withdraw" : "Submit Withdrawal Request"}
+              {balance.available < 100 ? "Need 100+ credits to withdraw" : "Submit Withdrawal Request"}
             </button>
           </form>
         </div>
