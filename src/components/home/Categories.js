@@ -51,7 +51,7 @@ export default function Categories() {
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {categories.map((cat, i) => (
             <motion.div
               key={cat.name}
@@ -115,6 +115,7 @@ export default function Categories() {
                   background: `${cat.color}12`,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   color: cat.color, fontSize: "14px", flexShrink: 0,
+                  marginLeft: "auto"
                 }}>
                   →
                 </div>
